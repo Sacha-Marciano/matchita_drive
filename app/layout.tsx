@@ -1,24 +1,11 @@
-// import AuthProvider from "./context/AuthProvider";
-// import "./styles/globals.css"
-// import { ReactNode } from "react";
-
-// export default function RootLayout({ children }: { children: ReactNode }) {
-//   return (
-//     <html lang="en">
-//       <body>
-//         <AuthProvider> {children} </AuthProvider>
-//       </body>
-//     </html>
-//   );
-// }
-
 import type { Metadata } from "next";
 
-import AuthProvider from "./context/AuthProvider";
+import AuthProvider from "./contexts/AuthProvider";
 
 import { Poppins } from "next/font/google";
 
 import "./styles/globals.css";
+import Header from "@/app/components/Header";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -40,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable}`}>
+        <Header />
         <AuthProvider> {children} </AuthProvider>
       </body>
     </html>

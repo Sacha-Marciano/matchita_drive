@@ -149,7 +149,7 @@ export default function HomePage() {
           setSelectedFile(file);
           setExtractedText("");
         }}
-        className="border p-2 rounded w-full"
+        className="border p-2 rounded w-full text-matchita-text-alt bg-bg-alt"
       >
         <option value="">Select a document...</option>
         {files.map((file) => (
