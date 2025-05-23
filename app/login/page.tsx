@@ -5,6 +5,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LogIn } from "lucide-react";
 import Button from "../components/ui/Button";
+import Image from "next/image";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -51,7 +52,14 @@ const LoginPage = () => {
         className="mb-8 "
       >
         <div className="flex items-center gap-2">
-          Sign in with Google <LogIn />
+          Sign in with 
+          <Image
+            src={"/icons/google.png"}
+            alt="Google Logo"
+            height={16}
+            width={16}
+            className="h-4 w-4"
+          />
         </div>
       </Button>
     </div>
