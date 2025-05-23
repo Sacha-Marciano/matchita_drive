@@ -25,7 +25,7 @@ const Button = ({
   const classDIS =
     " bg-bg-disabled text-matchita-text-disabled border-border-disabled ";
 
-  const classGeneral = "px-4 py-2 border rounded-xl";
+  const classGeneral = "px-4 py-2 border rounded-full";
 
   return (
     <button

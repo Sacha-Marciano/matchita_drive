@@ -10,9 +10,9 @@
   }
 }
 
-/* body {
+body {
   @apply bg-bg text-matchita-text;
-} */
+}
 
 @theme {
   /* Breakpoints */
