@@ -1,21 +1,32 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { LogIn } from "lucide-react";
 import Button from "../components/ui/Button";
 import Image from "next/image";
+import Loading from "../components/Loading";
 
 const LoginPage = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session,status } = useSession();
 
-  useEffect(() => {
-    if (session) {
-      router.push("/");
-    }
-  }, [session]);
+    useEffect(() => {
+      if (status === "loading") return;
+  
+      if (session) {
+        router.push("/");
+      } 
+
+ 
+    }, [session, status]);
+
+      if (status === "loading")
+        return (
+          <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold text-4xl ">
+            <Loading message="Loading" />
+          </div>
+        );
 
   return (
     <div className="h-[90vh] w-[100vw] flex flex-col items-center justify-center overflow-hidden ">

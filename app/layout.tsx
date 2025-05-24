@@ -27,8 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable}`}>
-        <Header />
-        <AuthProvider> {children} </AuthProvider>
+        <AuthProvider>
+            <Header />
+            {children}
+        </AuthProvider>
       </body>
     </html>
   );
