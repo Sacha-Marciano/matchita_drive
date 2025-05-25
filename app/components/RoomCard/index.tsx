@@ -33,7 +33,7 @@ export default function RoomCard({
   const extraFolderCount = folders.length - displayFolders.length;
 
   return (
-      <div className="border h-[225px] w-[447px] p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt cursor-pointer space-y-4 text-matchita-text-alt">
+      <div className="border max-h-[245px] max-w-[447px] p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt cursor-pointer space-y-4 text-matchita-text-alt">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Image
