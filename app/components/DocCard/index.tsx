@@ -18,7 +18,7 @@ export default function DocCard({
 }: DocCardProps) {
 
   return (
-    <div className="border flex flex-col justify-between max-w-[447px] h-[330px] p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt space-y-4 text-matchita-text-alt">
+    <div className="border flex flex-col justify-between max-w-[447px] h-[360px] p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt space-y-4 text-matchita-text-alt">
       {/* Header */}
       <div className="flex flex-col space-y-2">
         <h3 className="text-xl font-semibold text-matchita-text-alt">

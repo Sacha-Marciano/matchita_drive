@@ -10,6 +10,8 @@ import { IUser } from "../../database/models/users";
 import AddDocModal from "@/app/components/modals/AddDocumentModal";
 import { IDocument } from "@/app/database/models/documents";
 import DocCard from "@/app/components/DocCard";
+import Tabs from "@/app/components/ui/Tabs";
+import FolderCard from "@/app/components/FolderCard";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -20,6 +22,9 @@ export default function RoomPage() {
   const [user, setUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [docs, setDocs] = useState<IDocument[]>([]);
+  const [folders, setFolders] = useState<Record<string, IDocument[]> | null>(
+    null
+  );
   useEffect(() => {
     if (status === "loading") return;
 
@@ -43,6 +48,19 @@ export default function RoomPage() {
         setUser(userData.data);
         setRoom(roomData.data);
         setDocs(docData.data);
+
+        const docsByFolders = docData.data.reduce(
+          (acc: Record<string, IDocument[]>, doc: IDocument) => {
+            if (!acc[doc.folder]) {
+              acc[doc.folder] = [];
+            }
+            acc[doc.folder].push(doc);
+            return acc;
+          },
+          {}
+        );
+
+        setFolders(docsByFolders);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -71,6 +89,52 @@ export default function RoomPage() {
     );
   }
 
+  const tabs = [
+    {
+      label: "Folder",
+      content: (
+        <div className="space-y-6">
+          {folders &&
+            Object.entries(folders).map(([folderName, documents]) => (
+              <FolderCard
+                key={folderName}
+                folderName={folderName}
+                documents={documents}
+              />
+            ))}
+        </div>
+      ),
+    },
+    {
+      label: "Docs",
+      content: (
+        <div
+          className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] overflow-y-auto "
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          {docs.map((doc, index) => {
+            return (
+              <DocCard
+                key={index}
+                title={doc.title}
+                googleDocsUrl={doc.googleDocsUrl}
+                folder={doc.folder}
+                tags={doc.tags}
+                createdAt={doc.createdAt}
+              />
+            );
+          })}
+        </div>
+      ),
+    },
+    { label: "Chat", content: <p>Chat</p> },
+  ];
+
   return (
     <div className="p-4">
       <div className="flex flex-col lg:flex-row gap-2 justify-between items-center mb-6 p-4 bg-bg-alt rounded-2xl text-matchita-text-alt">
@@ -80,28 +144,7 @@ export default function RoomPage() {
         </Button>
       </div>
 
-      <div
-        className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] rounded-2xl overflow-y-auto border border-white p-4"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <style jsx>{`
-          div::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>{" "}
-        {docs.map((doc, index) => {
-          return (
-            <DocCard
-              key={index}
-              title={doc.title}
-              googleDocsUrl={doc.googleDocsUrl}
-              folder={doc.folder}
-              tags={doc.tags}
-              createdAt={doc.createdAt}
-            />
-          );
-        })}
-      </div>
+      <Tabs tabs={tabs} size="md" variant="secondary" />
 
       {/* Modal */}
       <AddDocModal

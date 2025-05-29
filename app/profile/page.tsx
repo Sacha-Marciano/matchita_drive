@@ -1,23 +1,25 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Loading from "../components/Loading";
 import { useSession, signOut } from "next-auth/react";
 import Button from "../components/ui/Button";
 import { useRouter } from "next/navigation";
+import { IUser } from "../database/models/users";
 
 const Profile = () => {
   const { data: session,status } = useSession();
   const router = useRouter();
 
-  const user = session?.user;
-
-  const initials = session?.user?.name
+  const[ user,setUser] = useState<IUser | null>(null);
+  const [docHandled, setDocHandled] = useState<string>("")
+  const initials = user?.name
     ?.split(" ")
     .map((n) => n[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
 
   // Redirect to login page if no session
   useEffect(() => {
@@ -26,9 +28,27 @@ const Profile = () => {
     if (!session) {
       router.push("/login");
     }
+
+    const fetchUser = async() => {
+      const userRes = await fetch("/api/users");
+      const userData = await userRes.json();
+
+      setUser(userData.data);
+    }
+
+    const fetchDocHandled = async() => {
+      const docRes = await fetch("/api/doch");
+      const docData = await docRes.json();
+
+      setDocHandled(docData.data.docHandled)
+    }
+
+    fetchDocHandled();
+    fetchUser();
+
   }, [session, status]);
 
-  if (status === "loading")
+  if (status === "loading" || !user || !docHandled)
     return (
       <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold text-4xl ">
         <Loading message="Loading Profile" />
@@ -47,7 +67,7 @@ const Profile = () => {
           <p className="text-2xl lg:text-[28px] font-bold">{user?.name}</p>
         </div>
 
-        <div className="flex flex-col gap-6 border border-white bg-bg-alt text-matchita-900 rounded-xl p-2 lg:p-4">
+        {user && <div className="flex flex-col gap-6 border border-white bg-bg-alt text-matchita-900 rounded-xl p-2 lg:p-4">
           <div className="flex justify-between">
             <label
               htmlFor="email"
@@ -56,7 +76,7 @@ const Profile = () => {
               Email
             </label>
             <p id="email" className="font-normal">
-              {user?.email}
+              {user.email}
             </p>
           </div>
           <div className="flex justify-between">
@@ -67,7 +87,7 @@ const Profile = () => {
               Rooms
             </label>
             <p id="rooms" className="font-normal">
-              6
+              {user.roomIds.length}
             </p>
           </div>
           <div className="flex justify-between">
@@ -78,7 +98,7 @@ const Profile = () => {
               Docs handled
             </label>
             <p id="docs" className="font-normal">
-              125
+              {docHandled}
             </p>
           </div>
           <div className="flex justify-between">
@@ -105,7 +125,7 @@ const Profile = () => {
               
             </p>
           </div> */}
-        </div>
+        </div>}
 
         <Button
           size="sm"
