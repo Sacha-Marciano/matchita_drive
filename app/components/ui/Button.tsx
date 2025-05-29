@@ -5,7 +5,7 @@ type ButtonProps = {
   className?: string;
   size?: "sm" | "md" | "lg";
   variant?: "primary" | "secondary" | "disabled";
-  onClick: () => void;
+  onClick?: () => void;
   children: React.ReactNode;
 };
 

@@ -33,36 +33,37 @@ export default function RoomCard({
   const extraFolderCount = folders.length - displayFolders.length;
 
   return (
-    <div className="border h-[380px] flex flex-col justify-between max-w-[447px] p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt cursor-pointer space-y-4 text-matchita-text-alt">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Image
-          src={avatar}
-          alt="Room Avatar"
-          width={56}
-          height={56}
-          className="w-14 h-14 rounded-xl border-2 border-matchita-300"
-        />
-        <div className="flex flex-col">
-          <h2 className="text-2xl font-semibold text-matchita-text-alt">
-            {title}
-          </h2>
-          {isOwner && (
-            <span className="text-xs text-matchita-200 bg-border-alt px-2 pb-0.5 rounded-md w-fit">
-              Owner
-            </span>
-          )}
+    <Link href={`/room/${id}`} className="hover:scale-105">
+      <div className="border h-[300px] flex flex-col justify-between  p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt cursor-pointer space-y-4 text-matchita-text-alt">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <Image
+            src={avatar}
+            alt="Room Avatar"
+            width={56}
+            height={56}
+            className="w-14 h-14 rounded-xl border-2 border-matchita-300"
+          />
+          <div className="flex flex-col">
+            <h2 className="text-2xl font-semibold text-matchita-text-alt">
+              {title}
+            </h2>
+            {isOwner && (
+              <span className="text-xs text-matchita-200 bg-border-alt px-2 pb-0.5 rounded-md w-fit">
+                Owner
+              </span>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Stats */}
-      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-matchita-500">
-        <span>🗂️ {documentCount} document(s)</span>
-        <span>📁 {folders.length} folder(s)</span>
-        <span>🏷️ {tags.length} tag(s)</span>
-        {viewerCount > 0 && <span>👥 {viewerCount} participant(s)</span>}
-        <span>🕒 Created {formatDistanceToNow(new Date(createdAt))} ago</span>
-      </div>
+        {/* Stats */}
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-matchita-500">
+          <span>🗂️ {documentCount} document(s)</span>
+          <span>📁 {folders.length} folder(s)</span>
+          <span>🏷️ {tags.length} tag(s)</span>
+          {viewerCount > 0 && <span>👥 {viewerCount} participant(s)</span>}
+          <span>🕒 Created {formatDistanceToNow(new Date(createdAt))} ago</span>
+        </div>
 
         <div className="space-y-4">
           {/* Tag Preview */}
@@ -114,11 +115,9 @@ export default function RoomCard({
               </span>
             </div>
           )}
+        </div>
 
       </div>
-      <Button size="lg" onClick={() => console.log("Loading room")}>
-            <Link href={`/room/${id}`}>Open Room</Link>
-          </Button>
-    </div>
+    </Link>
   );
 }

@@ -91,9 +91,12 @@ export default function RoomPage() {
 
   const tabs = [
     {
-      label: "Folder",
+      label: "Folders",
       content: (
-        <div className="space-y-6">
+        <div
+          className="h-[70vh] overflow-y-auto flex flex-col gap-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {folders &&
             Object.entries(folders).map(([folderName, documents]) => (
               <FolderCard

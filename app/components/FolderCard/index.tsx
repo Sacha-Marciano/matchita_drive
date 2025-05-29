@@ -3,6 +3,8 @@ import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { IDocument } from "@/app/database/models/documents";
 import Button from "../ui/Button";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
 
 interface FolderCardProps {
   folderName: string;
@@ -10,8 +12,11 @@ interface FolderCardProps {
 }
 
 export default function FolderCard({ folderName, documents }: FolderCardProps) {
-  const allTags = documents.flatMap((doc) => doc.tags);
-  const uniqueTags = [...new Set(allTags)].slice(0, 4);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const allTags = documents.flatMap((doc) => doc.title);
+  const docTitles = [...new Set(allTags)].slice(0, 4);
+  const extraTags = allTags.length - docTitles.length;
 
   const newestDoc = documents.reduce((latest, doc) =>
     new Date(doc.createdAt) > new Date(latest.createdAt) ? doc : latest
@@ -29,8 +34,8 @@ export default function FolderCard({ folderName, documents }: FolderCardProps) {
 
       {/* Tags */}
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        {uniqueTags.length > 0 ? (
-          uniqueTags.map((tag) => (
+        {docTitles.length > 0 ? (
+          docTitles.map((tag) => (
             <span
               key={tag}
               className="bg-matchita-100 text-matchita-600 px-2 py-0.5 rounded-full"
@@ -42,20 +47,40 @@ export default function FolderCard({ folderName, documents }: FolderCardProps) {
           <span className="bg-matchita-100 text-matchita-600 px-2 py-0.5 rounded-full">
             No tags
           </span>
+        )}{" "}
+        {extraTags > 0 && (
+          <span className="text-matchita-400">+{extraTags} more</span>
         )}
       </div>
 
-      {/* Info */}
-      <div className="text-sm text-matchita-500">
-        🕒 Last added: {formatDistanceToNow(new Date(newestDoc.createdAt))} ago
+      {/* Info + expand button*/}
+      <div className="w-full flex items-center justify-between">
+        <div className="text-sm text-matchita-500">
+          🕒 Last added: {formatDistanceToNow(new Date(newestDoc.createdAt))}{" "}
+          ago
+        </div>
+        {/* CTA */}
+        <Button size="md" onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? (
+            <div className="flex items-center gap-1">
+              <p>Close</p> <ChevronUp size={16} />
+            </div>
+          ) : (
+            <div className="flex items-center gap-1">
+              <p>Open</p> <ChevronDown size={16} />
+            </div>
+          )}
+        </Button>
       </div>
 
-      {/* CTA */}
-      <Button size="lg" onClick={() => console.log("redirect to drive")}>
-        <Link href={`/folder/${encodeURIComponent(folderName)}`}>
-          Open Folder
-        </Link>
-      </Button>
+{isOpen && <div className="bg-bg w-full p-4 flex flex-col gap-2 rounded-2xl">
+   {documents.map((doc,index) => {
+    return <div key={index} className="bg-bg-alt rounded-2xl p-2 w-full flex items-center justify-between ">
+        <h2 className="font-semibold">{doc.title} </h2>
+       <Button size="sm" onClick={() => window.open(doc.googleDocsUrl, "_blank")}> Open </Button>
+    </div>
+   })} </div>}
+
     </div>
   );
 }
