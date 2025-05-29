@@ -1,6 +1,5 @@
 // components/cards/FolderCard.tsx
 import { formatDistanceToNow } from "date-fns";
-import Link from "next/link";
 import { IDocument } from "@/app/database/models/documents";
 import Button from "../ui/Button";
 import { ChevronDown, ChevronUp } from "lucide-react";

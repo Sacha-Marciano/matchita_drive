@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import Button from "../ui/Button";
 
 interface RoomCardProps {
   id: string;

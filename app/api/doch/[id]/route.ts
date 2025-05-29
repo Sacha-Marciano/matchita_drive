@@ -4,7 +4,10 @@ import { getServerSession } from "next-auth";
 import { getRoomById } from "@/app/database/services/roomService";
 import { getDocumentById } from "@/app/database/services/documentService";
 
-export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   const { params } = context;
   const session = await getServerSession();
   if (!session?.user?.email) {
@@ -30,4 +33,21 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
   );
 
   return NextResponse.json({ data: docs });
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getServerSession();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const {docId} = await req.json();
+
+    const doc = await getDocumentById(new Types.ObjectId(docId))
+  
+    return NextResponse.json({ data: doc }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ message: err }, { status: 500 });
+  }
 }

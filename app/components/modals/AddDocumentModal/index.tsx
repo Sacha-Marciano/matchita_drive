@@ -117,6 +117,10 @@ export default function AddDocModal({
   };
 
   const handleSubmit = async () => {
+    if (!selectedFile || !session?.accessToken) return;
+
+    const { id, mimeType } = selectedFile;
+
     const extractedText = await handleExtractText();
 
     if (extractedText == null) {
@@ -169,6 +173,9 @@ export default function AddDocModal({
         tags: classData.tags,
         embedding: embedData.embeddings,
         createdAt: new Date(),
+        baseMimeType: mimeType,
+        googleId : id,
+
       };
 
       const saveRes = await fetch("/api/doch", {

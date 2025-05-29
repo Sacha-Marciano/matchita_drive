@@ -12,6 +12,7 @@ import { IDocument } from "@/app/database/models/documents";
 import DocCard from "@/app/components/DocCard";
 import Tabs from "@/app/components/ui/Tabs";
 import FolderCard from "@/app/components/FolderCard";
+import ChatWindow from "@/app/components/ChatWindow";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -25,12 +26,18 @@ export default function RoomPage() {
   const [folders, setFolders] = useState<Record<string, IDocument[]> | null>(
     null
   );
+  const [accessToken,setAccessToken] = useState<string>("");
+  
   useEffect(() => {
     if (status === "loading") return;
 
-    if (!session) {
+    if (session == null) {
       router.push("/login");
       return;
+    }
+
+    if (session.accessToken) {
+      setAccessToken(session.accessToken);
     }
 
     const fetchData = async () => {
@@ -135,7 +142,7 @@ export default function RoomPage() {
         </div>
       ),
     },
-    { label: "Chat", content: <p>Chat</p> },
+    { label: "Chat", content: <ChatWindow roomId={id} accessToken={accessToken}/> },
   ];
 
   return (
