@@ -5,7 +5,7 @@ export interface IDocument extends Document {
   googleDocsUrl: string;
   folder: string;
   tags: string[];
-  embeddedChunks: number[][];
+  embedding: number[];
   createdAt: Date;
 }
 
@@ -14,7 +14,7 @@ const DocumentSchema = new Schema<IDocument>({
   googleDocsUrl: { type: String, required: true },
   folder: { type: String, required: true },
   tags: [{ type: String }],
-  embeddedChunks: { type: [[Number]], default: [] },
+  embedding: { type: [Number], default: [] },
 }, { timestamps: true });
 
 export default mongoose.models.Document || model<IDocument>("Document", DocumentSchema);

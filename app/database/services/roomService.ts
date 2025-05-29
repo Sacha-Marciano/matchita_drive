@@ -23,8 +23,15 @@ export const addDocumentToRoom = (
 export const updateRoomTagsFolders = (
   roomId: Types.ObjectId,
   tags: string[],
-  folders: string[]
-) => Room.findByIdAndUpdate(roomId, { tags, folders });
+  folder: string
+) =>
+  Room.findByIdAndUpdate(
+    roomId,
+    {
+      $addToSet: { tags: { $each: tags }, folders: folder },
+    },
+    { runValidators: true }
+  );
 
 export const deleteRoom = (roomId: Types.ObjectId) =>
   Room.findByIdAndDelete(roomId);

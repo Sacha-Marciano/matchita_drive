@@ -5,19 +5,20 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react";
-import { ChevronDown, ChevronUp, X as Cross } from "lucide-react";
-import { cn } from "@/app/utils/cn"; // Ensure this helper works
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { cn } from "@/app/utils/cn";
+
+type Option = { name: string; value: string };
 
 type SelectProps = {
   className?: string;
   size?: "sm" | "md" | "lg";
   variant?: "primary" | "secondary" | "disabled";
+  label?: string;
 
-  label: string;
   value: string | null;
-  options: { name: string; value: string }[];
-  onChange: (value: string) => void;
-  handleDeselect: () => void;
+  options: Option[] | null;
+  onChange: (val: string | null) => void;
 };
 
 const Select = ({
@@ -28,7 +29,6 @@ const Select = ({
   value,
   options,
   onChange,
-  handleDeselect,
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -53,12 +53,12 @@ const Select = ({
 
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-sm font-medium">{label}</label>
+      {label && <label className="text-sm font-medium">{label}</label>}
 
       <Listbox
         value={value}
         onChange={(val) => {
-          onChange(val || "");
+          onChange(val);
           setIsOpen(false);
         }}
         disabled={variant === "disabled"}
@@ -69,24 +69,16 @@ const Select = ({
               classGeneral,
               sizeClass,
               variantClass,
-              "w-full flex justify-between items-center",
+              "w-full flex justify-between items-center text-nowrap text-ellipsis",
               variant === "disabled" ? "cursor-not-allowed opacity-70" : "cursor-pointer",
               className
             )}
             onClick={() => setIsOpen(!isOpen)}
           >
-            <span>{value || "Select an option"}</span>
+            <span className="text-ellipsis">
+              {options?.find((opt) => opt.value === value)?.name || "Select a doc"}
+            </span>
             <div className="flex items-center gap-2">
-              {value && variant !== "disabled" && (
-                <Cross
-                  className="w-4 h-4 text-red-500 hover:text-red-700"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeselect();
-                    setIsOpen(false);
-                  }}
-                />
-              )}
               {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </div>
           </ListboxButton>
@@ -98,14 +90,13 @@ const Select = ({
                 variantClass
               )}
             >
-              {options.map((option, index) => (
+              {options?.map((option, index) => (
                 <ListboxOption
                   key={index}
                   value={option.value}
-                  className={({ active, selected }) =>
+                  className={({ selected }) =>
                     cn(
                       "cursor-pointer px-4 py-2",
-                      active && "bg-gray-100",
                       selected && "font-semibold"
                     )
                   }

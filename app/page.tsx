@@ -64,7 +64,12 @@ export default function HomePage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 h-[70vh] rounded-2xl overflow-y-auto border border-white p-4">
+      <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] rounded-2xl overflow-y-auto border border-white p-4" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+        <style jsx>{`
+          div::-webkit-scrollbar {
+        display: none;
+          }
+        `}</style>
         {rooms.map((room) => (
           <RoomCard
             key={room._id as string}

@@ -6,15 +6,16 @@ import { getRoomById } from "@/app/database/services/roomService";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { params } = context;
   const session = await getServerSession();
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const user = await findUserByEmail(session.user.email);
-  const { id } = params;
+  const { id } = await params;
 
   if (!Types.ObjectId.isValid(id)) {
     return NextResponse.json({ error: "Invalid room ID" }, { status: 400 });
@@ -27,7 +28,7 @@ export async function GET(
 
   const isOwner = room.ownerId.toString() === user._id.toString();
   const isViewer = room.viewerIds.some(
-    (v: { toString: () => any }) => v.toString() === user._id.toString()
+    (v: { toString: () => string }) => v.toString() === user._id.toString()
   );
 
   if (!isOwner && !isViewer) {

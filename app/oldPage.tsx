@@ -143,21 +143,21 @@
 //         </button>
 //       </div>
 
-//       <select
-//         onChange={(e) => {
-//           const file = files.find((f) => f.id === e.target.value) || null;
-//           setSelectedFile(file);
-//           setExtractedText("");
-//         }}
-//         className="border p-2 rounded w-full text-matchita-text-alt bg-bg-alt"
-//       >
-//         <option value="">Select a document...</option>
-//         {files.map((file) => (
-//           <option key={file.id} value={file.id}>
-//             {file.name} ({file.mimeType})
-//           </option>
-//         ))}
-//       </select>
+    //   <select
+    //     onChange={(e) => {
+    //       const file = files.find((f) => f.id === e.target.value) || null;
+    //       setSelectedFile(file);
+    //       setExtractedText("");
+    //     }}
+    //     className="border p-2 rounded w-full text-matchita-text-alt bg-bg-alt"
+    //   >
+    //     <option value="">Select a document...</option>
+    //     {files.map((file) => (
+    //       <option key={file.id} value={file.id}>
+    //         {file.name} ({file.mimeType})
+    //       </option>
+    //     ))}
+    //   </select>
 
 //       {selectedFile && (
 //         <div className="space-y-2">

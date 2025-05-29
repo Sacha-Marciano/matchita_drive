@@ -5,9 +5,6 @@ export const createDocument = (data: Partial<IDocument>) => Document.create(data
 
 export const getDocumentById = (docId: Types.ObjectId) => Document.findById(docId);
 
-export const getDocumentsByRoomId = (roomId: Types.ObjectId) =>
-  Document.find({ roomId });
-
 export const deleteDocument = (docId: Types.ObjectId) => Document.findByIdAndDelete(docId);
 
 export const updateDocumentTagsFolder = (

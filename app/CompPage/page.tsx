@@ -10,7 +10,7 @@ import DuplicateCheckAnimation from "../components/Animations/DupCheckAnimation"
 import ClassificationAnimation from "../components/Animations/ClassifyAnimation";
 
 export default function CompPage() {
-  const [selectedOption, setSelectedOption] = useState<string>("");
+  const [selectedOption, setSelectedOption] = useState<string | null>("");
 
   const selectOptions = [
     { value: "option1", name: "option 1" },
@@ -86,14 +86,12 @@ export default function CompPage() {
               value={selectedOption}
               options={selectOptions}
               onChange={setSelectedOption}
-              handleDeselect={() => setSelectedOption("")}
             />
             <Select
               label="Default"
               value={selectedOption}
               options={selectOptions}
               onChange={setSelectedOption}
-              handleDeselect={() => setSelectedOption("")}
             />
             <Select
               label="Default"
@@ -101,7 +99,6 @@ export default function CompPage() {
               value={selectedOption}
               options={selectOptions}
               onChange={setSelectedOption}
-              handleDeselect={() => setSelectedOption("")}
             />
           </div>
 
@@ -114,7 +111,6 @@ export default function CompPage() {
               value={selectedOption}
               options={selectOptions}
               onChange={setSelectedOption}
-              handleDeselect={() => setSelectedOption("")}
             />
             <Select
               variant="secondary"
@@ -122,7 +118,6 @@ export default function CompPage() {
               value={selectedOption}
               options={selectOptions}
               onChange={setSelectedOption}
-              handleDeselect={() => setSelectedOption("")}
             />
             <Select
               variant="secondary"
@@ -131,7 +126,6 @@ export default function CompPage() {
               value={selectedOption}
               options={selectOptions}
               onChange={setSelectedOption}
-              handleDeselect={() => setSelectedOption("")}
             />
           </div>
 
@@ -144,7 +138,6 @@ export default function CompPage() {
               value={selectedOption}
               options={selectOptions}
               onChange={setSelectedOption}
-              handleDeselect={() => setSelectedOption("")}
             />
             <Select
               variant="disabled"
@@ -152,7 +145,6 @@ export default function CompPage() {
               value={selectedOption}
               options={selectOptions}
               onChange={setSelectedOption}
-              handleDeselect={() => setSelectedOption("")}
             />
             <Select
               variant="disabled"
@@ -161,7 +153,6 @@ export default function CompPage() {
               value={selectedOption}
               options={selectOptions}
               onChange={setSelectedOption}
-              handleDeselect={() => setSelectedOption("")}
             />
           </div>
         </div>
@@ -211,13 +202,13 @@ export default function CompPage() {
 
       {/* Animations */}
       <div>
-      <h2 className="text-xl font-semibold">Animations</h2>
+        <h2 className="text-xl font-semibold">Animations</h2>
 
-      <div className="flex items-center justify-around px-10">
-        <VectorizationAnimation />
-        <DuplicateCheckAnimation />
-        <ClassificationAnimation/>
-      </div>
+        <div className="flex items-center justify-around px-10">
+          <VectorizationAnimation />
+          <DuplicateCheckAnimation />
+          <ClassificationAnimation />
+        </div>
       </div>
     </div>
   );

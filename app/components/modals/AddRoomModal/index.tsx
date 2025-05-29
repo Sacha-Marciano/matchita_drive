@@ -47,7 +47,7 @@ export default function AddRoomModal({
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-      <div className="fixed inset-0 flex items-center justify-center">
+      <div className="fixed inset-0 flex items-center justify-center p-2">
         <div className="bg-white p-6 rounded-xl max-w-md w-full shadow-xl text-matchita-text-alt">
           <h2 className="text-lg font-bold mb-4">Create a Room</h2>
           <div className="space-y-4">
