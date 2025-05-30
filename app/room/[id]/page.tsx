@@ -13,6 +13,7 @@ import DocCard from "@/app/components/DocCard";
 import Tabs from "@/app/components/ui/Tabs";
 import FolderCard from "@/app/components/FolderCard";
 import ChatWindow from "@/app/components/ChatWindow";
+import SignoutMessage from "@/app/components/modals/SignoutMessage";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -26,8 +27,9 @@ export default function RoomPage() {
   const [folders, setFolders] = useState<Record<string, IDocument[]> | null>(
     null
   );
-  const [accessToken,setAccessToken] = useState<string>("");
-  
+  const [accessToken, setAccessToken] = useState<string>("");
+  const [showSignoutMessage, setShowSignoutMessage] = useState<boolean>(false);
+
   useEffect(() => {
     if (status === "loading") return;
 
@@ -142,7 +144,10 @@ export default function RoomPage() {
         </div>
       ),
     },
-    { label: "Chat", content: <ChatWindow roomId={id} accessToken={accessToken}/> },
+    {
+      label: "Chat",
+      content: <ChatWindow roomId={id} accessToken={accessToken} />,
+    },
   ];
 
   return (
@@ -164,6 +169,12 @@ export default function RoomPage() {
         room={room}
         documents={docs}
         setDocuments={setDocs}
+        setShowSignoutMessage={setShowSignoutMessage}
+      />
+
+      <SignoutMessage
+        isOpen={showSignoutMessage}
+        onClose={() => setShowSignoutMessage(false)}
       />
     </div>
   );

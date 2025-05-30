@@ -16,7 +16,7 @@ export const duplicateCheck = async (
   documents: IDocument[],
   newEmbedding: number[],
   newUrl: string | null,
-): Promise<{ embedding: number[]; googleDocsUrl: string } | null> => {
+): Promise< IDocument  | null> => {
   const SIM_THRESHOLD = 0.95;
 
   // Step 1: Check for exact URL match

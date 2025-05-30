@@ -7,7 +7,7 @@ type ButtonProps = {
   variant?: "primary" | "secondary" | "disabled";
   onClick?: () => void;
   children: React.ReactNode;
-};
+}& React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const Button = ({
   className,
@@ -15,6 +15,7 @@ const Button = ({
   variant = "primary",
   onClick,
   children,
+  ...props
 }: ButtonProps) => {
   const classSM = " text-xs  ";
   const classMD = " text-base ";
@@ -29,6 +30,7 @@ const Button = ({
 
   return (
     <button
+    {...props}
       onClick={onClick}
       className={cn(
         size === "sm" ? classSM : size === "lg" ? classLG : classMD,

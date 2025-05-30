@@ -10,6 +10,11 @@ import { duplicateCheck } from "@/app/utils/DuplicateCheck";
 import { IRoom } from "@/app/database/models/rooms";
 import { IDocument } from "@/app/database/models/documents";
 import { Session } from "next-auth";
+import VectorizationAnimation from "../../Animations/EmbedAnimation";
+import DuplicateCheckAnimation from "../../Animations/DupCheckAnimation";
+import ClassificationAnimation from "../../Animations/ClassifyAnimation";
+import { signOut } from "next-auth/react";
+import DocCard from "../../DocCard";
 
 interface DriveFile {
   id: string;
@@ -25,6 +30,7 @@ export default function AddDocModal({
   room,
   documents,
   setDocuments,
+  setShowSignoutMessage,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -32,6 +38,7 @@ export default function AddDocModal({
   room: IRoom;
   documents: IDocument[];
   setDocuments: Dispatch<SetStateAction<IDocument[]>>;
+  setShowSignoutMessage: Dispatch<SetStateAction<boolean>>;
 }) {
   const [files, setFiles] = useState<DriveFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null);
@@ -43,6 +50,15 @@ export default function AddDocModal({
     | null
   >(null);
   const [selectedOption, setSelectedOption] = useState<string>("");
+  const [duplicate, setDuplicate] = useState<IDocument | null>(null);
+  const [step, setStep] = useState<
+    | "embed"
+    | "duplicate-check"
+    | "classify"
+    | "duplicate-found"
+    | "error"
+    | null
+  >(null);
 
   const handleExtractText = async () => {
     if (!selectedFile || !session?.accessToken) return;
@@ -129,6 +145,7 @@ export default function AddDocModal({
     }
 
     try {
+      setStep("embed");
       const embedRes = await fetch(
         "https://fastapi-gemini-571768511871.us-central1.run.app/embed",
         {
@@ -140,17 +157,20 @@ export default function AddDocModal({
 
       const embedData = await embedRes.json();
 
-      const duplicate = await duplicateCheck(
+      setStep("duplicate-check");
+      const duplicateFound = await duplicateCheck(
         documents,
         embedData.embeddings,
         selectedFile?.webViewLink || "no url"
       );
 
-      if (duplicate) {
-        console.log(duplicate);
+      if (duplicateFound != null) {
+        setStep("duplicate-found");
+        setDuplicate(duplicateFound);
         return;
       }
 
+      setStep("classify");
       const classRes = await fetch(
         "https://fastapi-gemini-571768511871.us-central1.run.app/classify",
         {
@@ -174,8 +194,7 @@ export default function AddDocModal({
         embedding: embedData.embeddings,
         createdAt: new Date(),
         baseMimeType: mimeType,
-        googleId : id,
-
+        googleId: id,
       };
 
       const saveRes = await fetch("/api/doch", {
@@ -187,11 +206,14 @@ export default function AddDocModal({
         }),
       });
 
+      setStep(null);
+
       if (saveRes.status === 201) {
         onClose();
         setDocuments([...documents, docToSave as IDocument]);
       }
     } catch (err) {
+      setStep("error");
       console.error(err);
       return;
     }
@@ -200,22 +222,31 @@ export default function AddDocModal({
   //   Fetches files on session mount
   useEffect(() => {
     const fetchFiles = async () => {
-      if (!session?.accessToken) return;
+      try {
+        if (!session?.accessToken) return;
 
-      const res = await axios.get("https://www.googleapis.com/drive/v3/files", {
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-        params: {
-          fields: "files(id,name,mimeType,webViewLink)",
-        },
-      });
-      setFiles(res.data.files);
-      setOptions(
-        res.data.files.map((file: DriveFile) => {
-          return { name: file.name, value: file.id };
-        })
-      );
+        const res = await axios.get(
+          "https://www.googleapis.com/drive/v3/files",
+          {
+            headers: {
+              Authorization: `Bearer ${session.accessToken}`,
+            },
+            params: {
+              fields: "files(id,name,mimeType,webViewLink)",
+            },
+          }
+        );
+        setFiles(res.data.files);
+        setOptions(
+          res.data.files.map((file: DriveFile) => {
+            return { name: file.name, value: file.id };
+          })
+        );
+      } catch (err) {
+        console.error(err, ", Signin out");
+        setShowSignoutMessage(true);
+        signOut();
+      }
     };
 
     fetchFiles();
@@ -226,9 +257,12 @@ export default function AddDocModal({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-2">
         <div className="bg-white p-6 rounded-xl max-w-md w-full shadow-xl text-matchita-text-alt">
+          {/* Title */}
           <h2 className="text-lg font-bold mb-4">Upload Doc</h2>
+          {/* Body */}
           <div className="space-y-4">
             <div>
+              {/* Select */}
               <Select
                 label="Select a document"
                 value={selectedOption}
@@ -240,11 +274,48 @@ export default function AddDocModal({
                 }}
               />
             </div>
+            <div className="h-[50vh] overflow-hidden w-full flex items-center justify-center text-center">
+              {step === null && (
+                <div className="text-lg font-semibold">
+                  <p>Upload your doc,</p>
+                  <p>Let Matchita do the work !</p>
+                </div>
+              )}
+              {step === "embed" && <VectorizationAnimation />}
+              {step === "duplicate-check" && <DuplicateCheckAnimation />}
+              {step === "classify" && <ClassificationAnimation />}
+              {step === "duplicate-found" && duplicate != null && (
+                <div className="space-y-2">
+                  <h2 className="text-xl font-bold">
+                    A duplicate document was found !
+                  </h2>
+                  <DocCard
+                    title={duplicate.title}
+                    googleDocsUrl={duplicate.googleDocsUrl}
+                    folder={duplicate.folder}
+                    tags={duplicate.tags}
+                    createdAt={duplicate.createdAt}
+                  />
+                </div>
+              )}
+              {step === "error" && (
+                <p className="text-red-400 font-semibold">
+                  An error occured... Please try again
+                </p>
+              )}
+            </div>
+
             <div className="flex justify-end space-x-2 pt-2">
               <Button onClick={onClose} variant="secondary">
                 Cancel
               </Button>
-              <Button onClick={() => handleSubmit()}>Upload</Button>
+              <Button
+                variant={step === null ? "primary" : "disabled"}
+                onClick={() => handleSubmit()}
+                disabled={step != null}
+              >
+                Upload
+              </Button>
             </div>
           </div>
         </div>
