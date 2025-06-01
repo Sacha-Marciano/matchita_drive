@@ -42,6 +42,8 @@ export default function AddDocModal({
 }) {
   const [files, setFiles] = useState<DriveFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null);
+  const [actualVector, setActualVector] = useState<number[] | null>(null);
+  const [actualText, setActualText] = useState<string | null>(null);
   const [options, setOptions] = useState<
     | {
         name: string;
@@ -144,6 +146,8 @@ export default function AddDocModal({
       return;
     }
 
+    setActualText(extractedText);
+
     try {
       setStep("embed");
       const embedRes = await fetch(
@@ -156,6 +160,7 @@ export default function AddDocModal({
       );
 
       const embedData = await embedRes.json();
+      setActualVector(embedData.embeddings);
 
       setStep("duplicate-check");
       const duplicateFound = await duplicateCheck(
@@ -192,6 +197,63 @@ export default function AddDocModal({
         folder: classData.folder,
         tags: classData.tags,
         embedding: embedData.embeddings,
+        createdAt: new Date(),
+        baseMimeType: mimeType,
+        googleId: id,
+      };
+
+      const saveRes = await fetch("/api/doch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          document: docToSave,
+          roomId: room._id,
+        }),
+      });
+
+      setStep(null);
+
+      if (saveRes.status === 201) {
+        onClose();
+        setDocuments([...documents, docToSave as IDocument]);
+        setActualText(null);
+        setActualVector(null);
+      }
+    } catch (err) {
+      setStep("error");
+      console.error(err);
+      return;
+    }
+  };
+
+  const handleSaveAnyway = async () => {
+    if (!selectedFile || !session?.accessToken) return;
+
+    const { id, mimeType } = selectedFile;
+
+    try {
+      setStep("classify");
+      const classRes = await fetch(
+        "https://fastapi-gemini-571768511871.us-central1.run.app/classify",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: actualText,
+            folders: documents.map((doc) => doc.folder),
+            tags: documents.map((doc) => doc.tags).flat(),
+          }),
+        }
+      );
+
+      const classData = await classRes.json();
+
+      const docToSave = {
+        title: classData.title,
+        googleDocsUrl: selectedFile?.webViewLink || "no url",
+        folder: classData.folder,
+        tags: classData.tags,
+        embedding: actualVector,
         createdAt: new Date(),
         baseMimeType: mimeType,
         googleId: id,
@@ -296,6 +358,12 @@ export default function AddDocModal({
                     tags={duplicate.tags}
                     createdAt={duplicate.createdAt}
                   />
+                  <Button
+                    onClick={() => handleSaveAnyway()}
+                    className="bg-yellow-300!"
+                  >
+                    Save Anyway
+                  </Button>
                 </div>
               )}
               {step === "error" && (

@@ -16,8 +16,9 @@
                 Discrepencies check (file format, value format , ect...)
                     (send chat to user on refresh and give advice : in folder "financial plannin" you have budget x 3 and one cost documents, consider moving the cost document to another folder or renaming the folder to finance)
                     create notification for tabs
+                Translate answers based on the question
 
 #### final 
                 rework prompts
                 clean code (CLAUDE + prompt from GPT to keep regularity : api routes, components, pages)
-                refactore code (diviser pour mieux regner)
+                refactor code (diviser pour mieux regner)
