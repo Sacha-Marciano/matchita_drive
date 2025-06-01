@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Types } from "mongoose";
 import { getServerSession } from "next-auth";
-import { findUserByEmail } from "@/app/database/services/userServices";
-import { getRoomById } from "@/app/database/services/roomService";
+import {
+  findUserByEmail,
+  removeRoomFromUser,
+} from "@/app/database/services/userServices";
+import { deleteRoom, getRoomById } from "@/app/database/services/roomService";
 
 export async function GET(
   req: NextRequest,
@@ -34,6 +37,32 @@ export async function GET(
   if (!isOwner && !isViewer) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  return NextResponse.json({ data: room });
+}
+
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { params } = context;
+  const session = await getServerSession();
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const user = await findUserByEmail(session.user.email);
+  if (!Types.ObjectId.isValid(id)) {
+    return NextResponse.json({ error: "Invalid room ID" }, { status: 400 });
+  }
+
+  const room = await deleteRoom(new Types.ObjectId(id));
+  if (!room) {
+    return NextResponse.json({ error: "Room not found" }, { status: 404 });
+  }
+
+  await removeRoomFromUser(user._id, new Types.ObjectId(id));
 
   return NextResponse.json({ data: room });
 }

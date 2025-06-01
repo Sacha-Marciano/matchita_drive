@@ -1,9 +1,8 @@
 #TODO:
 
 ##IN PROGRESS
-                set folders when uploading doc
-                CRUD for room cards (inside the room)
-                CRUD for documents (on doc card)
+                (CRD)U for room cards (inside the room)
+                (CR)UD for documents (on doc card)
                 Include animations for chat thinking
                 
 ### BACKLOG

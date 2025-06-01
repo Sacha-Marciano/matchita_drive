@@ -14,6 +14,7 @@ import Tabs from "@/app/components/ui/Tabs";
 import FolderCard from "@/app/components/FolderCard";
 import ChatWindow from "@/app/components/ChatWindow";
 import SignoutMessage from "@/app/components/modals/SignoutMessage";
+import RoomSettings from "@/app/components/RoomSettings";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -148,6 +149,10 @@ export default function RoomPage() {
     {
       label: "Chat",
       content: <ChatWindow roomId={id} accessToken={accessToken} />,
+    },
+    {
+      label: "Settings",
+      content: <RoomSettings room={room} />,
     },
   ];
 

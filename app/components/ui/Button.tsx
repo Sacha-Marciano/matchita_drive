@@ -4,10 +4,10 @@ import React from "react";
 type ButtonProps = {
   className?: string;
   size?: "sm" | "md" | "lg";
-  variant?: "primary" | "secondary" | "disabled";
+  variant?: "primary" | "secondary" | "disabled" | "delete" | "delete-disable";
   onClick?: () => void;
   children: React.ReactNode;
-}& React.ButtonHTMLAttributes<HTMLButtonElement>;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const Button = ({
   className,
@@ -25,12 +25,13 @@ const Button = ({
   const classSEC = " bg-bg-alt text-matchita-text-alt border-border-alt ";
   const classDIS =
     " bg-bg-disabled text-matchita-text-disabled border-border-disabled ";
-
+  const classDEL = " bg-red-500 text-matchita-text border-white ";
+  const classDELDIS = " bg-red-200 text-matchita-text border-white ";
   const classGeneral = "px-4 py-2 border rounded-full cursor-pointer";
 
   return (
     <button
-    {...props}
+      {...props}
       onClick={onClick}
       className={cn(
         size === "sm" ? classSM : size === "lg" ? classLG : classMD,
@@ -38,6 +39,10 @@ const Button = ({
           ? classSEC
           : variant === "disabled"
           ? classDIS
+          : variant === "delete"
+          ? classDEL
+          : variant === "delete-disable"
+          ? classDELDIS
           : classPRI,
         classGeneral,
         className
