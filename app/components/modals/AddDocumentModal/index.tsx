@@ -360,7 +360,7 @@ export default function AddDocModal({
                   />
                   <Button
                     onClick={() => handleSaveAnyway()}
-                    className="bg-yellow-300!"
+                    className="bg-yellow-500!"
                   >
                     Save Anyway
                   </Button>

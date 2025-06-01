@@ -57,19 +57,6 @@ export default function RoomPage() {
         setUser(userData.data);
         setRoom(roomData.data);
         setDocs(docData.data);
-
-        const docsByFolders = docData.data.reduce(
-          (acc: Record<string, IDocument[]>, doc: IDocument) => {
-            if (!acc[doc.folder]) {
-              acc[doc.folder] = [];
-            }
-            acc[doc.folder].push(doc);
-            return acc;
-          },
-          {}
-        );
-
-        setFolders(docsByFolders);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -79,6 +66,20 @@ export default function RoomPage() {
 
     fetchData();
   }, [session, status, router]);
+
+  useEffect(() => {
+    const docsByFolders = docs.reduce(
+      (acc: Record<string, IDocument[]>, doc: IDocument) => {
+        if (!acc[doc.folder]) {
+          acc[doc.folder] = [];
+        }
+        acc[doc.folder].push(doc);
+        return acc;
+      },
+      {}
+    );
+    setFolders(docsByFolders);
+  }, [docs]);
 
   if (status === "loading" || loading || !user || !room)
     return (

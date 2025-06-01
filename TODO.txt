@@ -2,7 +2,6 @@
 
 ##IN PROGRESS
                 set folders when uploading doc
-                save anyway button
                 CRUD for room cards (inside the room)
                 CRUD for documents (on doc card)
                 Include animations for chat thinking
