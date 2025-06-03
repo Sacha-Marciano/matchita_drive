@@ -1,7 +1,6 @@
 #TODO:
 
 ##IN PROGRESS
-            move doc from folder to folder
                 
 ### BACKLOG
                 dashboard tab (number of docs, folders, viewers ect...)
@@ -11,8 +10,10 @@
                 invite users (notifications ?)
                 Discrepencies check (file format, value format , ect...)
                     (send chat to user on refresh and give advice : in folder "financial plannin" you have budget x 3 and one cost documents, consider moving the cost document to another folder or renaming the folder to finance)
-                    create notification for tabs
+                create notification for tabs
                 Translate answers based on the question
+                move doc from folder to folder
+
 
 
 #### final 

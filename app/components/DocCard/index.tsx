@@ -105,7 +105,7 @@ export default function DocCard({
           <p className="text-matchita-text-alt text-xl font-bold">
             Are you sure ?
           </p>
-          <p>Deleting document "{document.title}" is irreversible</p>
+          <p>Deleting document <strong>&quot;{document.title}&quot;</strong> is irreversible</p>
           <div className="w-full flex items-center justify-around">
             <Button
               variant="secondary"

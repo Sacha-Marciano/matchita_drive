@@ -3,7 +3,6 @@ import { Types } from "mongoose";
 import { getServerSession } from "next-auth";
 import { getRoomById, removeDocumentFromRoom } from "@/app/database/services/roomService";
 import { deleteDocument, getDocumentById, updateDocumentName } from "@/app/database/services/documentService";
-import { findUserByEmail } from "@/app/database/services/userServices";
 
 export async function GET(
   req: NextRequest,

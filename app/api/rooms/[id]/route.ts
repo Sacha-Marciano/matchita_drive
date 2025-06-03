@@ -75,7 +75,7 @@ export async function PUT(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const updatedRoomName = await updateRoomName(new Types.ObjectId(id), name);
+  await updateRoomName(new Types.ObjectId(id), name);
   const updatedRoomMetadata = await setRoomTagsFolders(new Types.ObjectId(id),folders,tags)
   return NextResponse.json({ data: updatedRoomMetadata });
 }
