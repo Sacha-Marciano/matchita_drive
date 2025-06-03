@@ -15,6 +15,7 @@ import FolderCard from "@/app/components/FolderCard";
 import ChatWindow from "@/app/components/ChatWindow";
 import SignoutMessage from "@/app/components/modals/SignoutMessage";
 import RoomSettings from "@/app/components/RoomSettings";
+import EditableDisplay from "@/app/components/ui/EditableDisplay";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -30,6 +31,17 @@ export default function RoomPage() {
   );
   const [accessToken, setAccessToken] = useState<string>("");
   const [showSignoutMessage, setShowSignoutMessage] = useState<boolean>(false);
+
+  const handleEditRoom = async (newValue: string) => {
+    const editRes = await fetch(`/api/rooms/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newValue }),
+    });
+
+    const editData = await editRes.json();
+    setRoom(editData.data)
+  };
 
   useEffect(() => {
     if (status === "loading") return;
@@ -159,7 +171,13 @@ export default function RoomPage() {
   return (
     <div className="p-4">
       <div className="flex flex-col lg:flex-row gap-2 justify-between items-center mb-6 p-4 bg-bg-alt rounded-2xl text-matchita-text-alt">
-        <h1 className="text-2xl font-bold"> {room.title}</h1>
+        {/* <h1 className="text-2xl font-bold"> {room.title}</h1> */}
+        <EditableDisplay
+          text={room.title}
+          handleEdit={handleEditRoom}
+          variant="secondary"
+          size="lg"
+        />
         <Button onClick={() => setIsModalOpen(true)} className="self-end">
           Upload doc
         </Button>

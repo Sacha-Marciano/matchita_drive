@@ -8,6 +8,7 @@ import Tag from "../components/ui/Tag";
 import VectorizationAnimation from "../components/Animations/EmbedAnimation";
 import DuplicateCheckAnimation from "../components/Animations/DupCheckAnimation";
 import ClassificationAnimation from "../components/Animations/ClassifyAnimation";
+// import EditableDisplay from "../components/ui/EditableDisplay";
 
 export default function CompPage() {
   const [selectedOption, setSelectedOption] = useState<string | null>("");
@@ -26,6 +27,11 @@ export default function CompPage() {
 
   return (
     <div className="space-y-8 p-8">
+      {/* Editable displays */}
+      {/* <div className="space-y-2">
+
+      <EditableDisplay text="text To Edit"/>
+      </div> */}
       {/* Buttons */}
       <div className="space-y-2">
         <h2 className="text-xl font-semibold">Buttons</h2>

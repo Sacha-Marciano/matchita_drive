@@ -43,10 +43,10 @@ export default function RoomCard({
             height={56}
             className="w-14 h-14 rounded-xl border-2 border-matchita-300"
           />
-          <div className="flex flex-col">
-            <h2 className="text-2xl font-semibold text-matchita-text-alt">
+          <div className="flex flex-col w-[78%]">
+            <p className="text-2xl font-semibold text-matchita-text-alt text-nowrap overflow-hidden overflow-ellipsis">
               {title}
-            </h2>
+            </p>
             {isOwner && (
               <span className="text-xs text-matchita-200 bg-border-alt px-2 pb-0.5 rounded-md w-fit">
                 Owner

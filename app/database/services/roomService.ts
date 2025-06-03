@@ -33,5 +33,12 @@ export const updateRoomTagsFolders = (
     { runValidators: true }
   );
 
+export const updateRoomName = (roomId: Types.ObjectId, name: string) =>
+  Room.findByIdAndUpdate(
+    roomId,
+    { $set: { title: name } },
+    { new: true, runValidators: true }
+  );
+
 export const deleteRoom = (roomId: Types.ObjectId) =>
   Room.findByIdAndDelete(roomId);

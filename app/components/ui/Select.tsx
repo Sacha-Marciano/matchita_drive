@@ -75,7 +75,7 @@ const Select = ({
             )}
             onClick={() => setIsOpen(!isOpen)}
           >
-            <span className="text-ellipsis">
+            <span className="overflow-hidden text-ellipsis mr-1">
               {options?.find((opt) => opt.value === value)?.name || "Select a doc"}
             </span>
             <div className="flex items-center gap-2">

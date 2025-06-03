@@ -9,6 +9,7 @@ const RoomSettings = ({ room }: { room: IRoom }) => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
+
   const handleDeleteRoom = async () => {
     try {
       const deleteRes = await fetch(`/api/rooms/${room._id}`, {
@@ -25,7 +26,12 @@ const RoomSettings = ({ room }: { room: IRoom }) => {
 
   return (
     <div className="w-full h-full min-h-[70vh] flex flex-col justify-between items-start">
-      <div>edit</div>
+      <div className="bg-bg-alt w-full rounded-xl p-4">
+        <div className="flex items-center justify-between">
+            <p className="font-bold text-matchita-text-alt">Room&apos;s Name</p>
+            <p className="font-semibold text-matchita-text-alt">{room.title}</p>
+        </div>
+      </div>
       <Button variant="delete" onClick={() => setIsModalOpen(true)}>
         Delete Room
       </Button>
