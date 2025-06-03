@@ -9,6 +9,7 @@ import RoomCard from "./components/RoomCard";
 import Button from "./components/ui/Button";
 import { IRoom } from "./database/models/rooms";
 import { IUser } from "./database/models/users";
+import HomeDashboard from "./components/HomeDashboard";
 
 export default function HomePage() {
   const router = useRouter();
@@ -57,17 +58,26 @@ export default function HomePage() {
 
   return (
     <div className="p-4">
-      <div className="flex flex-col lg:flex-row gap-2 justify-between items-center mb-6 p-4 bg-bg-alt rounded-2xl text-matchita-text-alt">
-        <h1 className="text-2xl font-bold">Welcome, {session?.user?.name}</h1>
+      <HomeDashboard userName={session?.user?.name || "User"} rooms={rooms} />
+      <div className="mb-6 flex justify-end">
         <Button onClick={() => setIsModalOpen(true)} className="self-end">
           + Add Room
         </Button>
       </div>
+      {/* <div className="flex flex-col lg:flex-row gap-2 justify-between items-center mb-6 p-4 bg-bg-alt rounded-2xl text-matchita-text-alt">
+        <h1 className="text-2xl font-bold">Welcome, {session?.user?.name}</h1>
+        <Button onClick={() => setIsModalOpen(true)} className="self-end">
+          + Add Room
+        </Button>
+      </div> */}
 
-      <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] rounded-2xl overflow-y-auto border border-white p-4" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+      <div
+        className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] rounded-2xl overflow-y-auto border border-white p-4"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
         <style jsx>{`
           div::-webkit-scrollbar {
-        display: none;
+            display: none;
           }
         `}</style>
         {rooms.map((room) => (

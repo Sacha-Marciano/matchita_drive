@@ -16,6 +16,7 @@ import ChatWindow from "@/app/components/ChatWindow";
 import SignoutMessage from "@/app/components/modals/SignoutMessage";
 import RoomSettings from "@/app/components/RoomSettings";
 import EditableDisplay from "@/app/components/ui/EditableDisplay";
+import RoomDashboard from "@/app/components/RoomDashboard";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -174,9 +175,9 @@ export default function RoomPage() {
 
   return (
     <div className="p-4">
-      <div className="flex flex-col lg:flex-row gap-2 justify-between items-center mb-6 p-4 bg-bg-alt rounded-2xl text-matchita-text-alt">
+      {/* <div className="flex flex-col lg:flex-row gap-2 justify-between items-center mb-6 p-4 bg-bg-alt rounded-2xl text-matchita-text-alt">
         {/* <h1 className="text-2xl font-bold"> {room.title}</h1> */}
-        <EditableDisplay
+      {/* <EditableDisplay
           text={room.title}
           handleEdit={handleEditRoom}
           variant="secondary"
@@ -185,9 +186,23 @@ export default function RoomPage() {
         <Button onClick={() => setIsModalOpen(true)} className="self-end">
           Upload doc
         </Button>
-      </div>
+      </div> */}
 
-      <Tabs tabs={tabs} size="md" variant="secondary" />
+      <RoomDashboard
+        room={room}
+        documents={docs}
+        onEditTitle={handleEditRoom}
+      />
+      <div className="relative">
+        <Tabs tabs={tabs} size="md" variant="secondary" />
+        <Button
+          variant="secondary"
+          onClick={() => setIsModalOpen(true)}
+          className="absolute top-0 right-2"
+        >
+          Upload doc <strong>+</strong>
+        </Button>
+      </div>
 
       {/* Modal */}
       <AddDocModal
