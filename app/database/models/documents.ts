@@ -9,6 +9,7 @@ export interface IDocument extends Document {
   createdAt: Date;
   baseMimeType: string;
   googleId: string;
+  teaser:string;
 }
 
 const DocumentSchema = new Schema<IDocument>(
@@ -20,6 +21,7 @@ const DocumentSchema = new Schema<IDocument>(
     embedding: { type: [Number], default: [] },
     baseMimeType: { type: String, required: true },
     googleId: { type: String, required: true },
+    teaser: {type:String, required:true},
   },
   { timestamps: true }
 );

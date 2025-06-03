@@ -200,6 +200,7 @@ export default function AddDocModal({
         createdAt: new Date(),
         baseMimeType: mimeType,
         googleId: id,
+        teaser: classData.teaser,
       };
 
       const saveRes = await fetch("/api/doch", {
@@ -259,6 +260,7 @@ export default function AddDocModal({
         createdAt: new Date(),
         baseMimeType: mimeType,
         googleId: id,
+        teaser: classData.teaser,
       };
 
       const saveRes = await fetch("/api/doch", {

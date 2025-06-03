@@ -13,10 +13,12 @@
                 create notification for tabs
                 Translate answers based on the question
                 move doc from folder to folder
+                add teaser to chat prompt to refine the findings
 
 
 
 #### final 
+                Deploy on cloud run
                 Include animations for chat thinking
                 Rework animations
                 rework prompts

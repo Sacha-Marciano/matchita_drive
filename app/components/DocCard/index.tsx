@@ -2,7 +2,7 @@ import { formatDistanceToNow } from "date-fns";
 import Button from "../ui/Button";
 import EditableDisplay from "../ui/EditableDisplay";
 import { IDocument } from "@/app/database/models/documents";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import OptionsMenu from "../ui/OptionMenu";
 import { IRoom } from "@/app/database/models/rooms";
 
@@ -19,9 +19,8 @@ export default function DocCard({
   setDocList,
   room,
 }: DocCardProps) {
-  // const [doc, setDoc] = useState<IDocument>(document);
-  const [isDeleteModeOn, setIsDeleteModeOn] = useState<boolean>(false);
-  const [titleToDisplay, setTitleToDisplay] = useState<string>(document.title);
+  const [mode, setMode] = useState<"normal" | "delete" | "teaser">("normal");
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const handleDocEdit = async (newValue: string) => {
     if (!docList || !setDocList) return;
@@ -56,7 +55,7 @@ export default function DocCard({
       // Step 1: Remove the deleted doc from UI
       const filteredList = docList.filter((doc) => doc._id !== deletedDoc._id);
       setDocList(filteredList);
-      setIsDeleteModeOn(false);
+      setMode("normal");
 
       // Step 2: Check if deleted folders or tags are now unused
       const remainingFolders = new Set(filteredList.map((doc) => doc.folder));
@@ -94,37 +93,20 @@ export default function DocCard({
     }
   };
 
-  useEffect(() => {
-    setTitleToDisplay(document.title);
-  }, [document._id, document.title]);
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(document.teaser);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 5000); // Reset after 2s
+  };
 
   return (
-    <div className="relative border flex flex-col justify-between  p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt space-y-4 text-matchita-text-alt">
-      {isDeleteModeOn && (
-        <div className="h-full flex flex-col justify-between items-center">
-          <p className="text-matchita-text-alt text-xl font-bold">
-            Are you sure ?
-          </p>
-          <p>Deleting document <strong>&quot;{document.title}&quot;</strong> is irreversible</p>
-          <div className="w-full flex items-center justify-around">
-            <Button
-              variant="secondary"
-              onClick={() => setIsDeleteModeOn(false)}
-            >
-              Cancel
-            </Button>
-            <Button variant="delete" onClick={() => handleDocDelete()}>
-              Delete
-            </Button>
-          </div>
-        </div>
-      )}
-      {!isDeleteModeOn && (
+    <div className="relative border h-[251px]  p-4 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt text-matchita-text-alt">
+      {mode === "normal" && (
         <div className="h-full flex flex-col justify-between gap-4">
           {/* Header */}
           <div className="flex flex-col gap-2">
             <EditableDisplay
-              text={titleToDisplay}
+              text={document.title}
               handleEdit={handleDocEdit}
               variant="secondary"
               size="full"
@@ -133,15 +115,18 @@ export default function DocCard({
               <div className="absolute right-1 top-1">
                 <OptionsMenu>
                   <div className="flex flex-col items-center justify-center">
-                  <Button
-                    variant="delete"
-                    size="sm"
-                    onClick={() => {
-                      setIsDeleteModeOn(true);
-                    }}
-                  >
-                    Delete
-                  </Button>
+                    <Button size="sm" onClick={() => setMode("teaser")}>
+                      Teaser
+                    </Button>
+                    <Button
+                      variant="delete"
+                      size="sm"
+                      onClick={() => {
+                        setMode("delete");
+                      }}
+                    >
+                      Delete
+                    </Button>
                   </div>
                 </OptionsMenu>
               </div>
@@ -180,6 +165,44 @@ export default function DocCard({
           >
             Open Document
           </Button>
+        </div>
+      )}
+      {mode === "delete" && (
+        <div className=" flex flex-col justify-between items-center gap-4 md:gap-6 lg:gap-8">
+          <p className="text-matchita-text-alt text-xl font-bold">
+            Are you sure ?
+          </p>
+          <p>
+            Deleting document <strong>&quot;{document.title}&quot;</strong> is
+            irreversible
+          </p>
+          <div className="w-full flex items-center justify-around">
+            <Button variant="secondary" onClick={() => setMode("normal")}>
+              Cancel
+            </Button>
+            <Button variant="delete" onClick={() => handleDocDelete()}>
+              Delete
+            </Button>
+          </div>
+        </div>
+      )}
+      {mode === "teaser" && (
+        <div className="h-full flex flex-col justify-between items-center z-50">
+          <div className="border p-2 bg-bg text-matchita-text w-full rounded-lg overflow-y-auto">
+            <p className="font-semibold"> {document.teaser} </p>
+          </div>
+          <div className="flex items-center justify-between w-full">
+            <Button variant="secondary" onClick={() => setMode("normal")}>
+              Back
+            </Button>
+            <Button
+              onClick={() => {
+                handleCopy();
+              }}
+            >
+             {isCopied ? "Copied !" : "Copy Teaser"}
+            </Button>
+          </div>
         </div>
       )}
     </div>
