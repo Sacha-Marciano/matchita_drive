@@ -20,6 +20,11 @@ export const addDocumentToRoom = (
   documentId: Types.ObjectId
 ) => Room.findByIdAndUpdate(roomId, { $addToSet: { documentIds: documentId } });
 
+export const removeDocumentFromRoom = (
+  roomId: Types.ObjectId,
+  documentId: Types.ObjectId
+) => Room.findByIdAndUpdate(roomId, { $pull: { documentIds: documentId } });
+
 export const updateRoomTagsFolders = (
   roomId: Types.ObjectId,
   tags: string[],
@@ -31,6 +36,19 @@ export const updateRoomTagsFolders = (
       $addToSet: { tags: { $each: tags }, folders: folder },
     },
     { runValidators: true }
+  );
+
+export const setRoomTagsFolders = (
+  roomId: Types.ObjectId,
+  folders: string[],
+  tags: string[]
+) =>
+  Room.findByIdAndUpdate(
+    roomId,
+    {
+      $set: { folders, tags },
+    },
+    { new: true, runValidators: true }
   );
 
 export const updateRoomName = (roomId: Types.ObjectId, name: string) =>

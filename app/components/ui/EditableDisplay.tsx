@@ -1,13 +1,13 @@
 "use client";
 import { Pencil, Check } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Spinner from "../Animations/Spinner";
 import { cn } from "@/app/utils/cn";
 
 type EditableDisplayProps = {
   text: string;
   handleEdit: (newValue: string) => Promise<void>;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "full";
   variant?: "primary" | "secondary" | "disabled";
 };
 
@@ -21,6 +21,8 @@ const EditableDisplay = ({
   const [value, setValue] = useState(text);
   const [isLoading, setIsLoading] = useState(false);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
@@ -33,25 +35,53 @@ const EditableDisplay = ({
     }
   };
 
-  // Size classes
+  // Exit edit mode on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isEditModeOn &&
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsEditModeOn(false);
+        setValue(text); // optional: reset value to original text
+      }
+    };
+
+    setValue(text);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isEditModeOn, text]);
+
   const sizeClass =
     size === "sm"
       ? "text-xs"
       : size === "lg"
       ? "text-xl font-bold"
+      : size === "full"
+      ? "text-xl font-bold"
       : "text-base";
 
   const inputClass =
-    size === "sm" ? "w-[120px]" : size === "lg" ? "w-[220px]" : "w-[180px]";
+    size === "sm"
+      ? "w-[120px]"
+      : size === "lg"
+      ? "w-[220px]"
+      : size === "full"
+      ? "w-full"
+      : "w-[180px]";
 
   const paragraphClass =
     size === "sm"
       ? "max-w-[120px]"
       : size === "lg"
       ? "max-w-[220px]"
+      : size === "full"
+      ? "w-full"
       : "max-w-[180px]";
 
-  // Variant classes
   const variantText =
     variant === "secondary"
       ? "text-matchita-text-alt"
@@ -67,7 +97,7 @@ const EditableDisplay = ({
       : "bg-bg text-matchita-text";
 
   return (
-    <>
+    <div className="mr-4" ref={wrapperRef}>
       {!isEditModeOn && (
         <div
           className={cn(
@@ -101,7 +131,7 @@ const EditableDisplay = ({
             onChange={(e) => setValue(e.target.value)}
             disabled={variant === "disabled"}
             className={cn(
-              "overflow-hidden overflow-ellipsis px-1 py-0.5 rounded-lg border border-matchita-800",
+              "overflow-hidden overflow-ellipsis px-1 rounded-lg border border-matchita-800",
               sizeClass,
               inputClass,
               inputStyle
@@ -110,7 +140,6 @@ const EditableDisplay = ({
           {isLoading ? (
             <Spinner
               variant={variant === "primary" ? "primary" : "secondary"}
-              size={size}
             />
           ) : (
             <Check
@@ -124,7 +153,7 @@ const EditableDisplay = ({
           )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

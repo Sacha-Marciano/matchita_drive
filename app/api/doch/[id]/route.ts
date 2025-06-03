@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Types } from "mongoose";
 import { getServerSession } from "next-auth";
-import { getRoomById } from "@/app/database/services/roomService";
-import { getDocumentById } from "@/app/database/services/documentService";
+import { getRoomById, removeDocumentFromRoom } from "@/app/database/services/roomService";
+import { deleteDocument, getDocumentById, updateDocumentName } from "@/app/database/services/documentService";
+import { findUserByEmail } from "@/app/database/services/userServices";
 
 export async function GET(
   req: NextRequest,
@@ -51,3 +52,61 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: err }, { status: 500 });
   }
 }
+
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { params } = context;
+  const session = await getServerSession();
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  if (!Types.ObjectId.isValid(id)) {
+    return NextResponse.json({ error: "Invalid document ID" }, { status: 400 });
+  }
+
+  const { name } = await req.json();
+  if (!name || typeof name !== "string") {
+    return NextResponse.json({ error: "Invalid document name" }, { status: 400 });
+  }
+
+  const updatedDoc = await updateDocumentName(new Types.ObjectId(id), name);
+  if (!updatedDoc) {
+    return NextResponse.json({ error: "Document not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({ data: updatedDoc });
+}
+
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { params } = context;
+  const session = await getServerSession();
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  const { searchParams } = new URL(req.url);
+  const roomId = searchParams.get("roomId");
+
+  if (!Types.ObjectId.isValid(id) || !roomId || !Types.ObjectId.isValid(roomId)) {
+    return NextResponse.json({ error: "Invalid document or room ID" }, { status: 400 });
+  }
+
+  const doc = await deleteDocument(new Types.ObjectId(id));
+  if (!doc) {
+    return NextResponse.json({ error: "Document not found" }, { status: 404 });
+  }
+
+  await removeDocumentFromRoom(new Types.ObjectId(roomId), doc._id);
+
+  return NextResponse.json({ data: doc });
+}
+

@@ -28,7 +28,7 @@ export default function Spinner({
   );
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center mr-2">
       <motion.div
         className={spinnerClass}
         animate={{ rotate: 360 }}

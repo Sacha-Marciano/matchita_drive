@@ -1,9 +1,7 @@
 #TODO:
 
 ##IN PROGRESS
-                (CRD)U for room cards (inside the room)
-                (CR)UD for documents (on doc card)
-                Include animations for chat thinking
+            move doc from folder to folder
                 
 ### BACKLOG
                 dashboard tab (number of docs, folders, viewers ect...)
@@ -16,7 +14,10 @@
                     create notification for tabs
                 Translate answers based on the question
 
+
 #### final 
+                Include animations for chat thinking
+                Rework animations
                 rework prompts
                 clean code (CLAUDE + prompt from GPT to keep regularity : api routes, components, pages)
                 refactor code (diviser pour mieux regner)

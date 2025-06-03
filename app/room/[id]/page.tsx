@@ -33,14 +33,19 @@ export default function RoomPage() {
   const [showSignoutMessage, setShowSignoutMessage] = useState<boolean>(false);
 
   const handleEditRoom = async (newValue: string) => {
+    if (!room) return;
     const editRes = await fetch(`/api/rooms/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newValue }),
+      body: JSON.stringify({
+        name: newValue,
+        folders: room.folders,
+        tags: room.tags,
+      }),
     });
 
     const editData = await editRes.json();
-    setRoom(editData.data)
+    setRoom(editData.data);
   };
 
   useEffect(() => {
@@ -135,7 +140,7 @@ export default function RoomPage() {
       label: "Docs",
       content: (
         <div
-          className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] overflow-y-auto "
+          className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] overflow-y-auto md:justify-start md:items-start "
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <style jsx>{`
@@ -147,11 +152,10 @@ export default function RoomPage() {
             return (
               <DocCard
                 key={index}
-                title={doc.title}
-                googleDocsUrl={doc.googleDocsUrl}
-                folder={doc.folder}
-                tags={doc.tags}
-                createdAt={doc.createdAt}
+                document={doc}
+                docList={docs}
+                setDocList={setDocs}
+                room={room}
               />
             );
           })}

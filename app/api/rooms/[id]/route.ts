@@ -5,7 +5,7 @@ import {
   findUserByEmail,
   removeRoomFromUser,
 } from "@/app/database/services/userServices";
-import { deleteRoom, getRoomById, updateRoomName } from "@/app/database/services/roomService";
+import { deleteRoom, getRoomById, setRoomTagsFolders, updateRoomName } from "@/app/database/services/roomService";
 
 export async function GET(
   req: NextRequest,
@@ -59,7 +59,7 @@ export async function PUT(
   }
 
   const body = await req.json();
-  const { name } = body;
+  const { name, folders,tags } = body;
 
   if (!name || typeof name !== "string") {
     return NextResponse.json({ error: "Invalid room name" }, { status: 400 });
@@ -75,8 +75,9 @@ export async function PUT(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const updatedRoom = await updateRoomName(new Types.ObjectId(id), name);
-  return NextResponse.json({ data: updatedRoom });
+  const updatedRoomName = await updateRoomName(new Types.ObjectId(id), name);
+  const updatedRoomMetadata = await setRoomTagsFolders(new Types.ObjectId(id),folders,tags)
+  return NextResponse.json({ data: updatedRoomMetadata });
 }
 
 

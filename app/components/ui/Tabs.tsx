@@ -45,7 +45,7 @@ const Tabs = ({ className, size = "md", variant = "primary", tabs }: TabsProps) 
         {tabs.map((tab, index) => (
           <button
             key={index}
-            className={tabClass(index)}
+            className={tabClass(index) + " cursor-pointer "}
             onClick={() => setActiveIndex(index)}
             disabled={variant === "disabled"}
           >

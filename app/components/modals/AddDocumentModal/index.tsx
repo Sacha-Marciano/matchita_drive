@@ -211,11 +211,13 @@ export default function AddDocModal({
         }),
       });
 
+      const saveData = await saveRes.json();
+
       setStep(null);
 
       if (saveRes.status === 201) {
         onClose();
-        setDocuments([...documents, docToSave as IDocument]);
+        setDocuments([...documents, saveData.data.newDoc]);
         setActualText(null);
         setActualVector(null);
       }
@@ -347,23 +349,22 @@ export default function AddDocModal({
               {step === "duplicate-check" && <DuplicateCheckAnimation />}
               {step === "classify" && <ClassificationAnimation />}
               {step === "duplicate-found" && duplicate != null && (
-                <div className="space-y-2">
+                <div className="space-y-2 max-w-[90%]">
                   <h2 className="text-xl font-bold">
                     A duplicate document was found !
                   </h2>
                   <DocCard
-                    title={duplicate.title}
-                    googleDocsUrl={duplicate.googleDocsUrl}
-                    folder={duplicate.folder}
-                    tags={duplicate.tags}
-                    createdAt={duplicate.createdAt}
+                    document={duplicate}
                   />
+                  <div className="flex items-center justify-around">
+                    <Button onClick={() => setStep(null)} >Cancel</Button>
                   <Button
                     onClick={() => handleSaveAnyway()}
                     className="bg-yellow-500!"
                   >
                     Save Anyway
                   </Button>
+                  </div>
                 </div>
               )}
               {step === "error" && (
