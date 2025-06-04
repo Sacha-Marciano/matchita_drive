@@ -3,9 +3,9 @@
 import React, { useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/Button";
+import Button from "../components/shared/ui/Button";
 import Image from "next/image";
-import Loading from "../components/Loading";
+import Loading from "../components/layout/Loading";
 
 const LoginPage = () => {
   const router = useRouter();

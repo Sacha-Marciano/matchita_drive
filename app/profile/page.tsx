@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Loading from "../components/Loading";
+import Loading from "../components/layout/Loading";
 import { useSession, signOut } from "next-auth/react";
-import Button from "../components/ui/Button";
+import Button from "../components/shared/ui/Button";
 import { useRouter } from "next/navigation";
 import { IUser } from "../database/models/users";
 

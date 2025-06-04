@@ -1,7 +1,7 @@
 "use client";
 import { Pencil, Check } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
-import Spinner from "../Animations/Spinner";
+import Spinner from "../../animations/Spinner";
 import { cn } from "@/app/utils/cn";
 
 type EditableDisplayProps = {

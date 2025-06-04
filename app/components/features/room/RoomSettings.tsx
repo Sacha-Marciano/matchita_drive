@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Button from "../ui/Button";
+import Button from "../../shared/ui/Button";
 import { useRouter } from "next/navigation";
 import { IRoom } from "@/app/database/models/rooms";
 import { Dialog } from "@headlessui/react";

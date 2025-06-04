@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FileText, FolderKanban, CalendarDays, User } from "lucide-react";
-import EditableDisplay from "@/app/components/ui/EditableDisplay";
+import EditableDisplay from "@/app/components/shared/ui/EditableDisplay";
 import { IRoom } from "@/app/database/models/rooms";
 import { IDocument } from "@/app/database/models/documents";
 import { format } from "date-fns";
 import { IUser } from "@/app/database/models/users";
-import InviteUserModal from "../modals/InviteUserModal";
+import InviteUserModal from "../user/InviteUserModal";
 
 type Props = {
   room: IRoom;

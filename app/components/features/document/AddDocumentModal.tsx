@@ -1,20 +1,20 @@
 "use client";
 
-import { Dialog } from "@headlessui/react";
-import Button from "../../ui/Button";
+import Button from "../../shared/ui/Button";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 import { extractTextFromGoogleDoc } from "@/app/utils/extractText";
-import Select from "../../ui/Select";
+import Select from "../../shared/ui/Select";
 import { duplicateCheck } from "@/app/utils/DuplicateCheck";
 import { IRoom } from "@/app/database/models/rooms";
 import { IDocument } from "@/app/database/models/documents";
 import { Session } from "next-auth";
-import VectorizationAnimation from "../../Animations/EmbedAnimation";
-import DuplicateCheckAnimation from "../../Animations/DupCheckAnimation";
-import ClassificationAnimation from "../../Animations/ClassifyAnimation";
+import VectorizationAnimation from "../../animations/EmbedAnimation";
+import DuplicateCheckAnimation from "../../animations/DupCheckAnimation";
+import ClassificationAnimation from "../../animations/ClassifyAnimation";
 import { signOut } from "next-auth/react";
-import DocCard from "../../DocCard";
+import DocCard from "./DocCard";
+import BaseModal from "../../shared/modals/BaseModal";
 
 interface DriveFile {
   id: string;
@@ -319,78 +319,72 @@ export default function AddDocModal({
   }, [session]);
 
   return (
-    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-      <div className="fixed inset-0 flex items-center justify-center p-2">
-        <div className="bg-white p-6 rounded-xl max-w-md w-full shadow-xl text-matchita-text-alt">
-          {/* Title */}
-          <h2 className="text-lg font-bold mb-4">Upload Doc</h2>
-          {/* Body */}
-          <div className="space-y-4">
-            <div>
-              {/* Select */}
-              <Select
-                label="Select a document"
-                value={selectedOption}
-                options={options}
-                onChange={(val) => {
-                  setSelectedOption(val || "");
-                  const file = files.find((f) => f.id === val) || null;
-                  setSelectedFile(file);
-                }}
-              />
+    <BaseModal isOpen={isOpen} onClose={onClose}>
+      {/* Title */}
+      <h2 className="text-lg font-bold mb-4">Upload Doc</h2>
+      {/* Body */}
+      <div className="space-y-4">
+        <div>
+          {/* Select */}
+          <Select
+            label="Select a document"
+            value={selectedOption}
+            options={options}
+            onChange={(val) => {
+              setSelectedOption(val || "");
+              const file = files.find((f) => f.id === val) || null;
+              setSelectedFile(file);
+            }}
+          />
+        </div>
+        <div className="h-[50vh] overflow-hidden w-full flex items-center justify-center text-center">
+          {step === null && (
+            <div className="text-lg font-semibold">
+              <p>Upload your doc,</p>
+              <p>Let Matchita do the work !</p>
             </div>
-            <div className="h-[50vh] overflow-hidden w-full flex items-center justify-center text-center">
-              {step === null && (
-                <div className="text-lg font-semibold">
-                  <p>Upload your doc,</p>
-                  <p>Let Matchita do the work !</p>
-                </div>
-              )}
-              {step === "embed" && <VectorizationAnimation />}
-              {step === "duplicate-check" && <DuplicateCheckAnimation />}
-              {step === "classify" && <ClassificationAnimation />}
-              {step === "duplicate-found" && duplicate != null && (
-                <div className="space-y-2 max-w-[90%]">
-                  <h2 className="text-xl font-bold">
-                    A duplicate document was found !
-                  </h2>
-                  <DocCard
-                    document={duplicate}
-                  />
-                  <div className="flex items-center justify-around">
-                    <Button onClick={() => setStep(null)} >Cancel</Button>
-                  <Button
-                    onClick={() => handleSaveAnyway()}
-                    className="bg-yellow-500!"
-                  >
-                    Save Anyway
-                  </Button>
-                  </div>
-                </div>
-              )}
-              {step === "error" && (
-                <p className="text-red-400 font-semibold">
-                  An error occured... Please try again
-                </p>
-              )}
+          )}
+          {step === "embed" && <VectorizationAnimation />}
+          {step === "duplicate-check" && <DuplicateCheckAnimation />}
+          {step === "classify" && <ClassificationAnimation />}
+          {step === "duplicate-found" && duplicate != null && (
+            <div className="space-y-2 max-w-[90%]">
+              <h2 className="text-xl font-bold">
+                A duplicate document was found !
+              </h2>
+              <DocCard document={duplicate} />
+              <div className="flex items-center justify-around">
+                <Button onClick={() => setStep(null)}>Cancel</Button>
+                <Button
+                  onClick={() => handleSaveAnyway()}
+                  className="bg-yellow-500!"
+                >
+                  Save Anyway
+                </Button>
+              </div>
             </div>
+          )}
+          {step === "error" && (
+            <p className="text-red-400 font-semibold">
+              An error occured... Please try again
+            </p>
+          )}
+        </div>
 
-            <div className="flex justify-end space-x-2 pt-2">
-              <Button onClick={onClose} variant="secondary">
-                Cancel
-              </Button>
-              <Button
-                variant={step === null ? "primary" : "disabled"}
-                onClick={() => handleSubmit()}
-                disabled={step != null}
-              >
-                Upload
-              </Button>
-            </div>
-          </div>
+        <div className="flex justify-end space-x-2 pt-2">
+          <Button onClick={onClose} variant="secondary">
+            Cancel
+          </Button>
+          <Button
+            variant={step === null ? "primary" : "disabled"}
+            onClick={() => handleSubmit()}
+            disabled={step != null}
+          >
+            Upload
+          </Button>
         </div>
       </div>
-    </Dialog>
+    </BaseModal>
+
   );
 }

@@ -3,19 +3,19 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Loading from "../../components/Loading";
-import Button from "../../components/ui/Button";
+import Loading from "../../components/layout/Loading";
+import Button from "../../components/shared/ui/Button";
 import { IRoom } from "../../database/models/rooms";
 import { IUser } from "../../database/models/users";
-import AddDocModal from "@/app/components/modals/AddDocumentModal";
+import AddDocModal from "@/app/components/features/document/AddDocumentModal";
 import { IDocument } from "@/app/database/models/documents";
-import DocCard from "@/app/components/DocCard";
-import Tabs from "@/app/components/ui/Tabs";
-import FolderCard from "@/app/components/FolderCard";
-import ChatWindow from "@/app/components/ChatWindow";
-import SignoutMessage from "@/app/components/modals/SignoutMessage";
-import RoomSettings from "@/app/components/RoomSettings";
-import RoomDashboard from "@/app/components/RoomDashboard";
+import DocCard from "@/app/components/features/document/DocCard";
+import Tabs from "@/app/components/shared/ui/Tabs";
+import FolderCard from "@/app/components/features/document/FolderCard";
+import ChatWindow from "@/app/components/features/room/ChatWindow";
+import SignoutMessage from "@/app/components/shared/modals/ForcedSignoutModal";
+import RoomSettings from "@/app/components/features/room/RoomSettings";
+import RoomDashboard from "@/app/components/features/room/RoomDashboard";
 
 export default function RoomPage() {
   const router = useRouter();

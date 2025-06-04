@@ -2,7 +2,7 @@ import { INotification } from "@/app/database/models/users";
 import { cn } from "@/app/utils/cn";
 import { formatDistanceToNow } from "date-fns";
 import React, { Dispatch, SetStateAction } from "react";
-import Button from "../ui/Button";
+import Button from "../Button";
 import { useRouter } from "next/navigation";
 
 const InviteNotif = ({

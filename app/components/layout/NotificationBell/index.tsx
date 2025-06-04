@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { INotification } from "@/app/database/models/users";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/app/utils/cn";
-import InviteNotif from "../Notifs/InviteNotif";
+import InviteNotif from "@/app/components/shared/ui/notifications/InviteNotif";
 
 interface NotificationBellProps {
   notifications: INotification[];

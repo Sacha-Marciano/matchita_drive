@@ -1,9 +1,9 @@
 import { formatDistanceToNow } from "date-fns";
-import Button from "../ui/Button";
-import EditableDisplay from "../ui/EditableDisplay";
+import Button from "../../shared/ui/Button";
+import EditableDisplay from "../../shared/ui/EditableDisplay";
 import { IDocument } from "@/app/database/models/documents";
 import { Dispatch, SetStateAction, useState } from "react";
-import OptionsMenu from "../ui/OptionMenu";
+import OptionsMenu from "../../shared/ui/OptionMenu";
 import { IRoom } from "@/app/database/models/rooms";
 
 interface DocCardProps {

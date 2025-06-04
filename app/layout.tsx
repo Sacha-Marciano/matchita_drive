@@ -5,7 +5,7 @@ import AuthProvider from "./contexts/AuthProvider";
 import { Poppins } from "next/font/google";
 
 import "./styles/globals.css";
-import Header from "@/app/components/Header";
+import Header from "@/app/components/layout/Header";
 
 const poppins = Poppins({
   subsets: ["latin"],

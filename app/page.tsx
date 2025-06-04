@@ -3,13 +3,13 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import AddRoomModal from "./components/modals/AddRoomModal";
-import Loading from "./components/Loading";
-import RoomCard from "./components/RoomCard";
-import Button from "./components/ui/Button";
+import AddRoomModal from "./components/features/room/AddRoomModal";
+import Loading from "./components/layout/Loading";
+import RoomCard from "./components/features/room/RoomCard";
+import Button from "./components/shared/ui/Button";
 import { IRoom } from "./database/models/rooms";
 import { IUser } from "./database/models/users";
-import HomeDashboard from "./components/HomeDashboard";
+import HomeDashboard from "./components/features/home/HomeDashboard";
 
 export default function HomePage() {
   const router = useRouter();
