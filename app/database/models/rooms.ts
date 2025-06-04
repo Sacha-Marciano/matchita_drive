@@ -1,15 +1,5 @@
-import mongoose, { Schema, Document, model, Types } from "mongoose";
-
-export interface IRoom extends Document {
-  title: string;
-  avatar: string;
-  ownerId: Types.ObjectId;
-  viewerIds: Types.ObjectId[];
-  documentIds: Types.ObjectId[];
-  folders: string[];
-  tags: string[];
-  createdAt: Date;
-}
+import mongoose, { Schema, model } from "mongoose";
+import { IRoom } from "@/app/types";
 
 const RoomSchema = new Schema<IRoom>({
   title: { type: String, required: true },

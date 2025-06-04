@@ -1,6 +1,6 @@
 "use client";
 
-import { IRoom } from "@/app/database/models/rooms";
+import { IRoom } from "@/app/types";
 
 interface Props {
   userName: string;

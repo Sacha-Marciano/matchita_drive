@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "../../shared/ui/Button";
-import { IRoom } from "@/app/database/models/rooms";
+import { IRoom } from "@/app/types";
 import BaseModal from "../../shared/modals/BaseModal";
 
 export default function AddRoomModal({

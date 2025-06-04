@@ -6,7 +6,7 @@ import axios from "axios";
 import { extractTextFromGoogleDoc } from "@/app/utils/extractText";
 import Select from "../../shared/ui/Select";
 import { duplicateCheck } from "@/app/utils/DuplicateCheck";
-import { IRoom } from "@/app/database/models/rooms";
+import { IRoom } from "@/app/types";
 import { IDocument } from "@/app/types";
 import { Session } from "next-auth";
 import VectorizationAnimation from "../../animations/EmbedAnimation";

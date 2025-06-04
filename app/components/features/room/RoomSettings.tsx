@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Button from "../../shared/ui/Button";
 import { useRouter } from "next/navigation";
-import { IRoom } from "@/app/database/models/rooms";
+import { IRoom } from "@/app/types";
 import { Dialog } from "@headlessui/react";
 
 const RoomSettings = ({ room }: { room: IRoom }) => {

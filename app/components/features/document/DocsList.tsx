@@ -1,7 +1,7 @@
 import { IDocument } from "@/app/types";
 import React, { Dispatch, SetStateAction } from "react";
 import DocCard from "./DocCard";
-import { IRoom } from "@/app/database/models/rooms";
+import { IRoom } from "@/app/types";
 
 const DocsList = ({
   docs,

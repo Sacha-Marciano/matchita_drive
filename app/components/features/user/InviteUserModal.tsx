@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { IUser } from "@/app/database/models/users";
 import Button from "../../shared/ui/Button";
 import { useSession } from "next-auth/react";
-import { IRoom } from "@/app/database/models/rooms";
+import { IRoom } from "@/app/types";
 import BaseModal from "../../shared/modals/BaseModal";
 
 const InviteUserModal = ({

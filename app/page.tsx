@@ -15,7 +15,7 @@ import Loading from "./components/layout/Loading";
 import Button from "./components/shared/ui/Button";
 
 // ─── Types ───────────────────────────────────────────────────
-import { IRoom } from "./database/models/rooms";
+import { IRoom } from "@/app/types";
 import { IUser } from "./database/models/users";
 
 // ─────────────────────────────────────────────────────────────

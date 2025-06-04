@@ -1,4 +1,4 @@
-import { IRoom } from "@/app/database/models/rooms";
+import { IRoom } from "@/app/types";
 import RoomCard from "./RoomCard";
 
 const RoomsList = ({ rooms, userId }: { rooms: IRoom[]; userId: string })  => {

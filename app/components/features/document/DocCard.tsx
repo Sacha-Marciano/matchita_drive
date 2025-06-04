@@ -4,7 +4,7 @@ import EditableDisplay from "../../shared/ui/EditableDisplay";
 import { IDocument } from "@/app/types";
 import { Dispatch, SetStateAction, useState } from "react";
 import OptionsMenu from "../../shared/ui/OptionMenu";
-import { IRoom } from "@/app/database/models/rooms";
+import { IRoom } from "@/app/types";
 
 interface DocCardProps {
   document: IDocument;

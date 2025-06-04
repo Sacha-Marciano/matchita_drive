@@ -18,7 +18,7 @@ import RoomDashboard from "@/app/components/features/room/RoomDashboard";
 import Tabs from "@/app/components/shared/ui/Tabs";
 
 // ─── Types ───────────────────────────────────────────────────
-import { IRoom } from "@/app/database/models/rooms";
+import { IRoom } from "@/app/types";
 import { IUser } from "@/app/database/models/users";
 import { IDocument } from "@/app/types";
 import FoldersList from "@/app/components/features/folder/FoldersList";

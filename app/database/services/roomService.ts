@@ -1,5 +1,7 @@
-import Room, { IRoom } from "../models/rooms";
+import Room from "../models/rooms";
 import { Types } from "mongoose";
+import { IRoom } from "@/app/types";
+
 
 export const createRoom = (data: Partial<IRoom>) => Room.create(data);
 
