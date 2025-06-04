@@ -1,20 +1,17 @@
 #TODO:
 
 ##IN PROGRESS
-                dashboard tab (number of docs, folders, viewers ect...)
-                stats in homepage above room container (include tailored teasers for VCs)
-      
-### BACKLOG
-                invite users (notifications ?)
-                create notification for tabs
                 missing file tab
+
+### BACKLOG
                 navigation menu
                 Discrepencies check (file format, value format , ect...)
                     (send chat to user on refresh and give advice : in folder "financial plannin" you have budget x 3 and one cost documents, consider moving the cost document to another folder or renaming the folder to finance)
-                Translate answers based on the question (translate docs)
+                Translate answers based on the question (+ translate docs)
                 move doc from folder to folder
                 add teaser to chat prompt to refine the findings
-
+                create notification for tabs
+                bulk upload feature
 
 
 #### final 

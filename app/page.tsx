@@ -60,7 +60,7 @@ export default function HomePage() {
     <div className="p-4">
       <HomeDashboard userName={session?.user?.name || "User"} rooms={rooms} />
       <div className="mb-6 flex justify-end">
-        <Button onClick={() => setIsModalOpen(true)} className="self-end">
+        <Button onClick={() => setIsModalOpen(true)} variant="secondary" className="self-end">
           + Add Room
         </Button>
       </div>

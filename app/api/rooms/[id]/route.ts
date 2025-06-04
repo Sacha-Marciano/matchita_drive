@@ -87,22 +87,44 @@ export async function DELETE(
 ) {
   const { params } = context;
   const session = await getServerSession();
+
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = await params;
-  const user = await findUserByEmail(session.user.email);
+
   if (!Types.ObjectId.isValid(id)) {
     return NextResponse.json({ error: "Invalid room ID" }, { status: 400 });
   }
 
-  const room = await deleteRoom(new Types.ObjectId(id));
+  const roomId = new Types.ObjectId(id);
+  const user = await findUserByEmail(session.user.email);
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  const room = await getRoomById(roomId);
   if (!room) {
     return NextResponse.json({ error: "Room not found" }, { status: 404 });
   }
 
-  await removeRoomFromUser(user._id, new Types.ObjectId(id));
+  // Optional: Only allow owner to delete the room
+  if (!room.ownerId.equals(user._id)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Remove room from all viewers
+  for (const viewerId of room.viewerIds) {
+    await removeRoomFromUser(viewerId, roomId);
+  }
+
+  // Remove room from owner
+  await removeRoomFromUser(user._id, roomId);
+
+  // Delete the room
+  await deleteRoom(roomId);
 
   return NextResponse.json({ data: room });
 }
+

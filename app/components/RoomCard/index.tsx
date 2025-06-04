@@ -60,7 +60,7 @@ export default function RoomCard({
           <span>🗂️ {documentCount} document(s)</span>
           <span>📁 {folders.length} folder(s)</span>
           <span>🏷️ {tags.length} tag(s)</span>
-          {viewerCount > 0 && <span>👥 {viewerCount} participant(s)</span>}
+          <span>👥 {viewerCount + 1} participant(s)</span>
           <span>🕒 Created {formatDistanceToNow(new Date(createdAt))} ago</span>
         </div>
 

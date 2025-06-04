@@ -48,7 +48,7 @@ const Profile = () => {
 
   }, [session, status]);
 
-  if (status === "loading" || !user || !docHandled)
+  if (status === "loading" || !user )
     return (
       <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold text-4xl ">
         <Loading message="Loading Profile" />
