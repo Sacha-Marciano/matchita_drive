@@ -64,13 +64,6 @@ export default function HomePage() {
           + Add Room
         </Button>
       </div>
-      {/* <div className="flex flex-col lg:flex-row gap-2 justify-between items-center mb-6 p-4 bg-bg-alt rounded-2xl text-matchita-text-alt">
-        <h1 className="text-2xl font-bold">Welcome, {session?.user?.name}</h1>
-        <Button onClick={() => setIsModalOpen(true)} className="self-end">
-          + Add Room
-        </Button>
-      </div> */}
-
       <div
         className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] rounded-2xl overflow-y-auto border border-white p-4"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}

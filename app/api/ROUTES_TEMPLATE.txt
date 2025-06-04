@@ -1,0 +1,141 @@
+import { NextRequest, NextResponse } from "next/server";
+import { Types } from "mongoose";
+import { getServerSession } from "next-auth";
+
+import connectToDB from "@/app/database/mongodb";
+
+// Import your resource-specific services
+import {
+  getResourceById,
+  updateResourceName,
+  deleteResource,
+} from "@/app/database/services/resourceService";
+import {
+  getParentById,
+  removeResourceFromParent,
+} from "@/app/database/services/parentService";
+
+// GET: List child resources in a parent (e.g., docs in a room)
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  await connectToDB();
+  const { id } = await context.params;
+
+  if (!Types.ObjectId.isValid(id)) {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  }
+
+  const session = await getServerSession();
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const parent = await getParentById(new Types.ObjectId(id));
+    if (!parent) {
+      return NextResponse.json({ error: "Parent not found" }, { status: 404 });
+    }
+
+    const items = await Promise.all(
+      parent.resourceIds.map((resId: string) =>
+        getResourceById(new Types.ObjectId(resId))
+      )
+    );
+
+    return NextResponse.json({ data: items }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: "Server error", details: error }, { status: 500 });
+  }
+}
+
+// POST: Get a single resource by ID (from body)
+export async function POST(req: NextRequest) {
+  const session = await getServerSession();
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { resourceId } = await req.json();
+    if (!Types.ObjectId.isValid(resourceId)) {
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+    }
+
+    const item = await getResourceById(new Types.ObjectId(resourceId));
+    if (!item) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ data: item }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: "Server error", details: error }, { status: 500 });
+  }
+}
+
+// PUT: Update a resource
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  await connectToDB();
+  const { id } = await context.params;
+
+  if (!Types.ObjectId.isValid(id)) {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  }
+
+  const session = await getServerSession();
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { name } = await req.json();
+    if (typeof name !== "string" || !name.trim()) {
+      return NextResponse.json({ error: "Invalid name" }, { status: 400 });
+    }
+
+    const updated = await updateResourceName(new Types.ObjectId(id), name);
+    if (!updated) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ data: updated }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: "Server error", details: error }, { status: 500 });
+  }
+}
+
+// DELETE: Delete a resource and remove it from parent
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  await connectToDB();
+  const { id } = await context.params;
+  const { searchParams } = new URL(req.url);
+  const parentId = searchParams.get("parentId");
+
+  if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(parentId || "")) {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  }
+
+  const session = await getServerSession();
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const deleted = await deleteResource(new Types.ObjectId(id));
+    if (!deleted) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    await removeResourceFromParent(new Types.ObjectId(parentId!), deleted._id);
+    return NextResponse.json({ data: deleted }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: "Server error", details: error }, { status: 500 });
+  }
+}

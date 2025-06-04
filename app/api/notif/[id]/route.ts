@@ -1,8 +1,10 @@
 // /app/api/notif/[id]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/app/lib/mongodb";
-import { Types } from "mongoose";
 import { getServerSession } from "next-auth";
+import { Types } from "mongoose";
+
+import connectToDB from "@/app/database/mongodb";
 import {
   addRoomToUser,
   findUserByEmail,
@@ -10,70 +12,51 @@ import {
 } from "@/app/database/services/userServices";
 import { addViewerToRoom } from "@/app/database/services/roomService";
 
-// export async function GET(
-//   req: NextRequest,
-//   { params }: { params: { id: string } }
-// ) {
-//   const userId = params.id;
-
-//   if (!Types.ObjectId.isValid(userId)) {
-//     return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
-//   }
-
-//   await connectDB();
-
-//   const user = await User.findById(userId, "notifications");
-
-//   if (!user) {
-//     return NextResponse.json({ error: "User not found" }, { status: 404 });
-//   }
-
-//   const sortedNotifications = user.notifications.sort(
-//     (a : INotification, b: INotification) => b.createdAt.getTime() - a.createdAt.getTime()
-//   );
-
-//   return NextResponse.json({ notifications: sortedNotifications });
-// }
-
+// POST /api/notif/[id]
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
-  await connectDB();
+  await connectToDB();
+
   const { params } = context;
-  const session = await getServerSession();
-  if (!session?.user?.email)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { status, notif } = await req.json();
-
-  const user = await findUserByEmail(session.user.email);
-
   const { id } = await params;
   const notifId = id;
 
   if (!Types.ObjectId.isValid(notifId)) {
-    return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid room ID" }, { status: 400 });
   }
-  console.log(notif);
-  if (status === "accept") {
-    try {
-      await markNotificationAsRead(user._id, notifId);
-      await addViewerToRoom(
-        new Types.ObjectId(notif.metadata.payload),
-        user._id
-      );
-      const userNewRoom = await addRoomToUser(
-        user._id,
-        new Types.ObjectId(notif.metadata.payload)
-      );
 
-      return NextResponse.json({ data: userNewRoom.notifications }, { status: 200 });
-    } catch (err) {
+  const session = await getServerSession();
+
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { status, notif } = await req.json();
+    const user = await findUserByEmail(session.user.email);
+
+    if (status === "accept") {
+      const roomId = new Types.ObjectId(notif.metadata.payload);
+      await markNotificationAsRead(user._id, notifId);
+      await addViewerToRoom(roomId, user._id);
+      const updatedUser = await addRoomToUser(user._id, roomId);
+
       return NextResponse.json(
-        { error: `error accepting invitation: ${err}` },
-        { status: 400 }
+        { message: "Invitation accepted", data: updatedUser.notifications },
+        { status: 200 }
       );
     }
+
+    return NextResponse.json(
+      { message: "Invalid status action" },
+      { status: 400 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Failed to process notification", error },
+      { status: 400 }
+    );
   }
 }

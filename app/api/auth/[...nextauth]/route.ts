@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { findUserByEmail, createUser, updateLastLogin } from "@/app/database/services/userServices";
-import connectDb from "@/app/lib/mongodb";
+import connectDb from "@/app/database/mongodb";
 
 declare module "next-auth" {
   interface Session {
