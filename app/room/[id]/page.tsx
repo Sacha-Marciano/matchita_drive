@@ -1,64 +1,62 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+// ─── Framework Imports ───────────────────────────────────────
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Loading from "../../components/layout/Loading";
-import Button from "../../components/shared/ui/Button";
-import { IRoom } from "../../database/models/rooms";
-import { IUser } from "../../database/models/users";
+
+// ─── Auth ────────────────────────────────────────────────────
+import { useSession } from "next-auth/react";
+
+// ─── Components ──────────────────────────────────────────────
+import Loading from "@/app/components/layout/Loading";
+import Button from "@/app/components/shared/ui/Button";
 import AddDocModal from "@/app/components/features/document/AddDocumentModal";
-import { IDocument } from "@/app/database/models/documents";
-import DocCard from "@/app/components/features/document/DocCard";
-import Tabs from "@/app/components/shared/ui/Tabs";
-import FolderCard from "@/app/components/features/document/FolderCard";
 import ChatWindow from "@/app/components/features/room/ChatWindow";
 import SignoutMessage from "@/app/components/shared/modals/ForcedSignoutModal";
 import RoomSettings from "@/app/components/features/room/RoomSettings";
 import RoomDashboard from "@/app/components/features/room/RoomDashboard";
+import Tabs from "@/app/components/shared/ui/Tabs";
+
+// ─── Types ───────────────────────────────────────────────────
+import { IRoom } from "@/app/database/models/rooms";
+import { IUser } from "@/app/database/models/users";
+import { IDocument } from "@/app/database/models/documents";
+import FoldersList from "@/app/components/features/folder/FoldersList";
+import DocsList from "@/app/components/features/document/DocsList";
+
+// ─── Utils / Constants ───────────────────────────────────────
+// import { YOUR_UTILITY_FN } from "@/lib/utils";
+
+// ─────────────────────────────────────────────────────────────
 
 export default function RoomPage() {
+  // ─── Hooks ────────────────────────────────────────────────
   const router = useRouter();
   const { id } = useParams();
   const { data: session, status } = useSession();
+
+  // ─── State ────────────────────────────────────────────────
   const [room, setRoom] = useState<IRoom>();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<IUser | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [docs, setDocs] = useState<IDocument[]>([]);
   const [folders, setFolders] = useState<Record<string, IDocument[]> | null>(
     null
   );
-  const [accessToken, setAccessToken] = useState<string>("");
-  const [showSignoutMessage, setShowSignoutMessage] = useState<boolean>(false);
+  const [accessToken, setAccessToken] = useState("");
+  const [showSignoutMessage, setShowSignoutMessage] = useState(false);
 
-  const handleEditRoom = async (newValue: string) => {
-    if (!room) return;
-    const editRes = await fetch(`/api/rooms/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: newValue,
-        folders: room.folders,
-        tags: room.tags,
-      }),
-    });
-
-    const editData = await editRes.json();
-    setRoom(editData.data);
-  };
-
+  // ─── Effects ──────────────────────────────────────────────
   useEffect(() => {
     if (status === "loading") return;
 
-    if (session == null) {
+    if (!session) {
       router.push("/login");
       return;
     }
 
-    if (session.accessToken) {
-      setAccessToken(session.accessToken);
-    }
+    if (session.accessToken) setAccessToken(session.accessToken);
 
     const fetchData = async () => {
       try {
@@ -83,14 +81,12 @@ export default function RoomPage() {
     };
 
     fetchData();
-  }, [session, status, router]);
+  }, [session, status]);
 
   useEffect(() => {
     const docsByFolders = docs.reduce(
-      (acc: Record<string, IDocument[]>, doc: IDocument) => {
-        if (!acc[doc.folder]) {
-          acc[doc.folder] = [];
-        }
+      (acc: Record<string, IDocument[]>, doc) => {
+        if (!acc[doc.folder]) acc[doc.folder] = [];
         acc[doc.folder].push(doc);
         return acc;
       },
@@ -99,68 +95,57 @@ export default function RoomPage() {
     setFolders(docsByFolders);
   }, [docs]);
 
-  if (status === "loading" || loading || !user || !room)
+  // ─── Early Return (Auth or Loading) ───────────────────────
+  if (status === "loading" || loading || !user || !room) {
     return (
-      <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold text-4xl ">
+      <div className="h-[90vh] w-[100vw] flex items-center justify-center">
         <Loading message="Loading Rooms" />
       </div>
     );
+  }
 
   if (!user.roomIds.map(String).includes(String(room._id))) {
     return (
-      <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold  text-white ">
-        <div className="text-center">
-          <h1>You are not allowed in this room</h1>
+      <div className="h-[90vh] w-[100vw] flex items-center justify-center text-white text-center">
+        <div>
+          <h1 className="text-2xl font-bold">
+            You are not allowed in this room
+          </h1>
           <p>Please contact the room admin to get access</p>
         </div>
       </div>
     );
   }
 
+  // ─── Handlers ─────────────────────────────────────────────
+  const handleEditRoom = async (newValue: string) => {
+    if (!room) return;
+
+    const res = await fetch(`/api/rooms/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: newValue,
+        folders: room.folders,
+        tags: room.tags,
+      }),
+    });
+
+    const updated = await res.json();
+    setRoom(updated.data);
+  };
+
+  const handleUploadClick = () => setIsModalOpen(true);
+
+  // ─── Tabs Config ──────────────────────────────────────────
   const tabs = [
     {
       label: "Folders",
-      content: (
-        <div
-          className="h-[70vh] overflow-y-auto flex flex-col gap-4"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {folders &&
-            Object.entries(folders).map(([folderName, documents]) => (
-              <FolderCard
-                key={folderName}
-                folderName={folderName}
-                documents={documents}
-              />
-            ))}
-        </div>
-      ),
+      content: <FoldersList folders={folders} />,
     },
     {
       label: "Docs",
-      content: (
-        <div
-          className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] overflow-y-auto md:justify-start md:items-start "
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          <style jsx>{`
-            div::-webkit-scrollbar {
-              display: none;
-            }
-          `}</style>
-          {docs.map((doc, index) => {
-            return (
-              <DocCard
-                key={index}
-                document={doc}
-                docList={docs}
-                setDocList={setDocs}
-                room={room}
-              />
-            );
-          })}
-        </div>
-      ),
+      content: <DocsList docs={docs} setDocList={setDocs} room={room} />,
     },
     {
       label: "Chat",
@@ -172,38 +157,29 @@ export default function RoomPage() {
     },
   ];
 
+  // ─── Render ───────────────────────────────────────────────
   return (
     <div className="p-4">
-      {/* <div className="flex flex-col lg:flex-row gap-2 justify-between items-center mb-6 p-4 bg-bg-alt rounded-2xl text-matchita-text-alt">
-        {/* <h1 className="text-2xl font-bold"> {room.title}</h1> */}
-      {/* <EditableDisplay
-          text={room.title}
-          handleEdit={handleEditRoom}
-          variant="secondary"
-          size="lg"
-        />
-        <Button onClick={() => setIsModalOpen(true)} className="self-end">
-          Upload doc
-        </Button>
-      </div> */}
-
+      {/* Header / Dashboard */}
       <RoomDashboard
         room={room}
         documents={docs}
         onEditTitle={handleEditRoom}
       />
+
+      {/* Tabs + Upload Action */}
       <div className="relative">
         <Tabs tabs={tabs} size="md" variant="secondary" />
         <Button
           variant="secondary"
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleUploadClick}
           className="absolute top-0 right-2"
         >
           Upload doc <strong>+</strong>
         </Button>
       </div>
 
-      {/* Modal */}
+      {/* Modals */}
       <AddDocModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -214,6 +190,7 @@ export default function RoomPage() {
         setShowSignoutMessage={setShowSignoutMessage}
       />
 
+      {/* Forced Signout message */}
       <SignoutMessage
         isOpen={showSignoutMessage}
         onClose={() => setShowSignoutMessage(false)}

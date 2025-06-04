@@ -1,0 +1,89 @@
+"use client";
+
+// ─── Framework Imports ───────────────────────────────────────
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+// ─── Auth ────────────────────────────────────────────────────
+import { useSession } from "next-auth/react";
+
+// ─── Third-Party Libraries ───────────────────────────────────
+// import dayjs from "dayjs"; (if used)
+// import useSWR from "swr"; (if used)
+
+// ─── Components ──────────────────────────────────────────────
+import ComponentName from "@/components/your/path/ComponentName";
+// e.g. import RoomCard from "@/components/features/room/RoomCard";
+
+// ─── UI & Layout ─────────────────────────────────────────────
+import Loading from "@/components/layout/Loading";
+import Button from "@/components/shared/ui/Button";
+
+// ─── Types ───────────────────────────────────────────────────
+import { IRoom } from "@/database/models/rooms";
+import { IUser } from "@/database/models/users";
+
+// ─── Utils / Constants ───────────────────────────────────────
+// import { YOUR_UTILITY_FN } from "@/lib/utils";
+
+// ─────────────────────────────────────────────────────────────
+
+export default function PageName() {
+  // ─── Hooks ────────────────────────────────────────────────
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  // ─── State ────────────────────────────────────────────────
+  const [stateVar1, setStateVar1] = useState<Type>(initialValue);
+  const [stateVar2, setStateVar2] = useState<Type>(initialValue);
+
+  // ─── Derived Values / Memos ───────────────────────────────
+  // const derivedValue = useMemo(...);
+
+  // ─── Effects ──────────────────────────────────────────────
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    // Fetch logic or side effect
+  }, [session, status]);
+
+  // ─── Early Return (Auth or Loading) ───────────────────────
+  if (status === "loading" || loadingCondition) {
+    return (
+      <div className="h-[90vh] w-[100vw] flex items-center justify-center">
+        <Loading message="Loading..." />
+      </div>
+    );
+  }
+
+  // ─── Render ───────────────────────────────────────────────
+  return (
+    <div className="p-4">
+      {/* Header / Dashboard */}
+      <HeaderComponent />
+
+      {/* Actions */}
+      <div className="mb-6 flex justify-end">
+        <Button onClick={handleClick} variant="secondary">
+          + Action
+        </Button>
+      </div>
+
+      {/* Main Content */}
+      <div className="grid gap-4">
+        {/* Map / Loop / Section */}
+        {array.map((item) => (
+          <ItemCard key={item.id} {...item} />
+        ))}
+      </div>
+
+      {/* Modals */}
+      <SomeModal isOpen={isOpen} onClose={handleClose} />
+    </div>
+  );
+}

@@ -1,56 +1,51 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useSession, signIn } from "next-auth/react";
+// ─── Framework Imports ───────────────────────────────────────
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Button from "../components/shared/ui/Button";
 import Image from "next/image";
-import Loading from "../components/layout/Loading";
 
-const LoginPage = () => {
+// ─── Auth ────────────────────────────────────────────────────
+import { useSession, signIn } from "next-auth/react";
+
+// ─── Components ──────────────────────────────────────────────
+import Loading from "@/app/components/layout/Loading";
+import Button from "@/app/components/shared/ui/Button";
+import CircleBg from "@/app/components/shared/ui/CircleBg";
+
+// ─── Page Component ──────────────────────────────────────────
+export default function LoginPage() {
+  // ─── Hooks ────────────────────────────────────────────────
   const router = useRouter();
-  const { data: session,status } = useSession();
+  const { data: session, status } = useSession();
 
-    useEffect(() => {
-      if (status === "loading") return;
-  
-      if (session) {
-        router.push("/");
-      } 
+  // ─── Effects ──────────────────────────────────────────────
+  useEffect(() => {
+    if (status === "loading") return;
+    if (session) router.push("/");
+  }, [session, status]);
 
- 
-    }, [session, status]);
-
-      if (status === "loading")
-        return (
-          <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold text-4xl ">
-            <Loading message="Loading" />
-          </div>
-        );
-
-  return (
-    <div className="h-[90vh] w-[100vw] flex flex-col items-center justify-center overflow-hidden ">
-      {/* Circles Bg */}
-      <div className="w-full h-full absolute top-0 bottom-0 left-0 right-0 overflow-hidden -z-10">
-        {/* Original Circles */}
-        <div className="h-[235px] w-[235px] rounded-full bg-matchita-300 absolute top-10 right-20"></div>
-        <div className="h-[135px] w-[135px] rounded-full bg-matchita-700 absolute bottom-60 left-20"></div>
-        <div className="h-[400px] w-[400px] rounded-full bg-matchita-900 absolute -bottom-10 left-20 -z-10"></div>
-
-        {/* New Decorative Circles */}
-        <div className="h-[100px] w-[100px] rounded-full bg-matchita-500  absolute top-32 left-1/2 -translate-x-1/2"></div>
-        <div className="h-[300px] w-[300px] rounded-full bg-matchita-300 absolute -top-20 left-1/4 -z-20"></div>
-        <div className="h-[150px] w-[150px] rounded-full bg-matchita-600  absolute bottom-20 right-32 z-0 "></div>
-        <div className="h-[90px] w-[90px] rounded-full bg-matchita-400  absolute top-[60%] left-[60%] "></div>
-        <div className="h-[220px] w-[220px] rounded-full bg-matchita-400 absolute bottom-5 left-[45%] -translate-x-1/2 z-[-1] "></div>
+  // ─── Early Return (Loading) ───────────────────────────────
+  if (status === "loading") {
+    return (
+      <div className="h-[90vh] w-[100vw] flex items-center justify-center">
+        <Loading message="Loading" />
       </div>
+    );
+  }
+
+  // ─── Render ───────────────────────────────────────────────
+  return (
+    <div className="h-[90vh] w-[100vw] flex flex-col items-center justify-center overflow-hidden relative">
+      <CircleBg />
 
       {/* Title */}
-      {/* Subtitle */}
       <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
         Unlock the power of Matchita!
       </h1>
-      <p className="text-lg md:text-xl text-gray-200 max-w-xl mb-8">
+
+      {/* Subtitle */}
+      <p className="text-lg md:text-xl text-gray-200 max-w-xl mb-8 text-center">
         Your intelligent workspace for documents. Matchita helps you organize,
         search, and understand your files with AI, instantly.
       </p>
@@ -60,21 +55,19 @@ const LoginPage = () => {
         variant="secondary"
         size="lg"
         onClick={() => signIn("google")}
-        className="mb-8 "
+        className="mb-8"
       >
         <div className="flex items-center gap-2">
-          Sign in with 
+          Sign in with
           <Image
-            src={"/icons/google.png"}
+            src="/icons/google.png"
             alt="Google Logo"
-            height={16}
             width={16}
+            height={16}
             className="h-4 w-4"
           />
         </div>
       </Button>
     </div>
   );
-};
-
-export default LoginPage;
+}

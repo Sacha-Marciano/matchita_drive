@@ -1,24 +1,37 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+// ─── Framework Imports ───────────────────────────────────────
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+// ─── Auth ────────────────────────────────────────────────────
+import { useSession } from "next-auth/react";
+
+// ─── Components ──────────────────────────────────────────────
 import AddRoomModal from "./components/features/room/AddRoomModal";
+import RoomsList from "./components/features/room/RoomsList";
+import HomeDashboard from "./components/features/home/HomeDashboard";
 import Loading from "./components/layout/Loading";
-import RoomCard from "./components/features/room/RoomCard";
 import Button from "./components/shared/ui/Button";
+
+// ─── Types ───────────────────────────────────────────────────
 import { IRoom } from "./database/models/rooms";
 import { IUser } from "./database/models/users";
-import HomeDashboard from "./components/features/home/HomeDashboard";
+
+// ─────────────────────────────────────────────────────────────
 
 export default function HomePage() {
+  // ─── Hooks ────────────────────────────────────────────────
   const router = useRouter();
   const { data: session, status } = useSession();
+
+  // ─── State ────────────────────────────────────────────────
   const [rooms, setRooms] = useState<IRoom[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState<IUser | null>(null);
 
+  // ─── Effects ──────────────────────────────────────────────
   useEffect(() => {
     if (status === "loading") return;
 
@@ -49,45 +62,27 @@ export default function HomePage() {
     fetchData();
   }, [session, status, router]);
 
-  if (status === "loading" || loading || !user)
+  // ─── Loading State ────────────────────────────────────────
+  if (status === "loading" || loading || !user) {
     return (
-      <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold text-4xl ">
+      <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold text-4xl">
         <Loading message="Loading Rooms" />
       </div>
     );
+  }
 
+  // ─── Render ───────────────────────────────────────────────
   return (
     <div className="p-4">
       <HomeDashboard userName={session?.user?.name || "User"} rooms={rooms} />
+
       <div className="mb-6 flex justify-end">
-        <Button onClick={() => setIsModalOpen(true)} variant="secondary" className="self-end">
+        <Button onClick={() => setIsModalOpen(true)} variant="secondary">
           + Add Room
         </Button>
       </div>
-      <div
-        className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3  gap-4 h-[70vh] rounded-2xl overflow-y-auto border border-white p-4"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <style jsx>{`
-          div::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
-        {rooms.map((room) => (
-          <RoomCard
-            key={room._id as string}
-            id={room._id as string}
-            title={room.title}
-            avatar={room.avatar}
-            documentCount={room.documentIds.length}
-            folders={room.folders}
-            tags={room.tags}
-            viewerCount={room.viewerIds.length}
-            createdAt={room.createdAt}
-            isOwner={room.ownerId === user._id}
-          />
-        ))}
-      </div>
+
+      <RoomsList rooms={rooms} userId={user._id as string} />
 
       <AddRoomModal
         isOpen={isModalOpen}

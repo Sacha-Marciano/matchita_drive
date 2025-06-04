@@ -1,18 +1,32 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Loading from "../components/layout/Loading";
-import { useSession, signOut } from "next-auth/react";
-import Button from "../components/shared/ui/Button";
+// ─── Framework Imports ───────────────────────────────────────
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { IUser } from "../database/models/users";
 
-const Profile = () => {
-  const { data: session,status } = useSession();
+// ─── Auth ────────────────────────────────────────────────────
+import { useSession, signOut } from "next-auth/react";
+
+// ─── Components ──────────────────────────────────────────────
+import Loading from "@/app/components/layout/Loading";
+import Button from "@/app/components/shared/ui/Button";
+
+// ─── Types ───────────────────────────────────────────────────
+import { IUser } from "@/app/database/models/users";
+import InfoRow from "../components/shared/ui/InfoRow";
+
+// ─────────────────────────────────────────────────────────────
+
+export default function ProfilePage() {
+  // ─── Hooks ────────────────────────────────────────────────
   const router = useRouter();
+  const { data: session, status } = useSession();
 
-  const[ user,setUser] = useState<IUser | null>(null);
-  const [docHandled, setDocHandled] = useState<string>("")
+  // ─── State ────────────────────────────────────────────────
+  const [user, setUser] = useState<IUser | null>(null);
+  const [docHandled, setDocHandled] = useState<string>("");
+
+  // ─── Derived Values ───────────────────────────────────────
   const initials = user?.name
     ?.split(" ")
     .map((n) => n[0])
@@ -20,113 +34,61 @@ const Profile = () => {
     .slice(0, 2)
     .toUpperCase();
 
-
-  // Redirect to login page if no session
+  // ─── Effects ──────────────────────────────────────────────
   useEffect(() => {
     if (status === "loading") return;
-
     if (!session) {
       router.push("/login");
+      return;
     }
 
-    const fetchUser = async() => {
-      const userRes = await fetch("/api/users");
-      const userData = await userRes.json();
+    const fetchUser = async () => {
+      const res = await fetch("/api/users");
+      const data = await res.json();
+      setUser(data.data);
+    };
 
-      setUser(userData.data);
-    }
+    const fetchDocHandled = async () => {
+      const res = await fetch("/api/doch");
+      const data = await res.json();
+      setDocHandled(data.data.docHandled);
+    };
 
-    const fetchDocHandled = async() => {
-      const docRes = await fetch("/api/doch");
-      const docData = await docRes.json();
-
-      setDocHandled(docData.data.docHandled)
-    }
-
-    fetchDocHandled();
     fetchUser();
-
+    fetchDocHandled();
   }, [session, status]);
 
-  if (status === "loading" || !user )
+  // ─── Early Return ─────────────────────────────────────────
+  if (status === "loading" || !user) {
     return (
-      <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold text-4xl ">
+      <div className="h-[90vh] w-[100vw] flex items-center justify-center">
         <Loading message="Loading Profile" />
       </div>
     );
+  }
 
+  // ─── Render ───────────────────────────────────────────────
   return (
     <div className="h-[85vh] flex flex-col lg:items-center relative mb-14">
       <div className="px-6 py-2 lg:px-0 lg:w-[488px] lg:mt-14">
+        {/* Header / Avatar */}
         <div className="flex gap-4 items-center mb-8 lg:flex-col">
           <div className="w-16 h-16 lg:h-20 lg:w-20 p-3 rounded-3xl bg-[#DAE2E980] text-surf-blue flex items-center justify-center font-bold text-[26px] lg:text-[32.5px]">
             {initials}
-            {/* Uncomment to show user google image */}
-            {/* {user && <img src={user.image || "/default-profile.png"} className="rounded-xl" />} */}
+            {/* <img src={user.image || "/default-profile.png"} className="rounded-xl" /> */}
           </div>
-          <p className="text-2xl lg:text-[28px] font-bold">{user?.name}</p>
+          <p className="text-2xl lg:text-[28px] font-bold">{user.name}</p>
         </div>
 
-        {user && <div className="flex flex-col gap-6 border border-white bg-bg-alt text-matchita-900 rounded-xl p-2 lg:p-4">
-          <div className="flex justify-between">
-            <label
-              htmlFor="email"
-              className=" text-surf-blues500 text-sm font-semibold"
-            >
-              Email
-            </label>
-            <p id="email" className="font-normal">
-              {user.email}
-            </p>
-          </div>
-          <div className="flex justify-between">
-            <label
-              htmlFor="rooms"
-              className=" text-surf-blues500 text-sm font-semibold"
-            >
-              Rooms
-            </label>
-            <p id="rooms" className="font-normal">
-              {user.roomIds.length}
-            </p>
-          </div>
-          <div className="flex justify-between">
-            <label
-              htmlFor="docs"
-              className=" text-surf-blues500 text-sm font-semibold"
-            >
-              Docs handled
-            </label>
-            <p id="docs" className="font-normal">
-              {docHandled}
-            </p>
-          </div>
-          <div className="flex justify-between">
-            <label
-              htmlFor="plan"
-              className=" text-surf-blues500 text-sm font-semibold"
-            >
-              Plan
-            </label>
-            <p id="plan" className="font-normal">
-              Pro
-            </p>
-          </div>
+        {/* User Info */}
+        <div className="flex flex-col gap-6 border border-white bg-bg-alt text-matchita-900 rounded-xl p-2 lg:p-4">
+          <InfoRow label="Email" value={user.email} />
+          <InfoRow label="Rooms" value={user.roomIds.length} />
+          <InfoRow label="Docs handled" value={docHandled} />
+          <InfoRow label="Plan" value="Pro" />
+        </div>
 
-          {/* Template for profile infos */}
-          {/* <div className="flex justify-between">
-            <label
-              htmlFor=""
-              className=" text-surf-blues500 text-sm font-semibold"
-            >
-              
-            </label>
-            <p id="" className="font-normal">
-              
-            </p>
-          </div> */}
-        </div>}
-
+        {/* Actions */}
         <Button
           size="sm"
           variant="secondary"
@@ -138,6 +100,4 @@ const Profile = () => {
       </div>
     </div>
   );
-};
-
-export default Profile;
+}
