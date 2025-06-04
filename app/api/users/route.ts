@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ data: users }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch users." },
+      { error: `Failed to fetch users: ${error}` },
       { status: 500 }
     );
   }
@@ -56,7 +56,7 @@ export async function PUT(req: Request) {
     return NextResponse.json({ data: user }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch users." },
+      { error: `Failed to fetch users: ${error}` },
       { status: 500 }
     );
   }

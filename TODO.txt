@@ -3,6 +3,7 @@
 ##IN PROGRESS
                 missing file tab
 
+
 ### BACKLOG
                 navigation menu
                 Discrepencies check (file format, value format , ect...)
@@ -12,6 +13,9 @@
                 add teaser to chat prompt to refine the findings
                 create notification for tabs
                 bulk upload feature
+                review viewer permissions
+                style viewers modal
+                review profile (add viewers and viewers modal)
 
 
 #### final 

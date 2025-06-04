@@ -15,7 +15,6 @@ import FolderCard from "@/app/components/FolderCard";
 import ChatWindow from "@/app/components/ChatWindow";
 import SignoutMessage from "@/app/components/modals/SignoutMessage";
 import RoomSettings from "@/app/components/RoomSettings";
-import EditableDisplay from "@/app/components/ui/EditableDisplay";
 import RoomDashboard from "@/app/components/RoomDashboard";
 
 export default function RoomPage() {

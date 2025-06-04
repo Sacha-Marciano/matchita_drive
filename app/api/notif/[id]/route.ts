@@ -1,6 +1,5 @@
 // /app/api/notif/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import User, { INotification } from "@/app/database/models/users";
 import connectDB from "@/app/lib/mongodb";
 import { Types } from "mongoose";
 import { getServerSession } from "next-auth";
@@ -72,7 +71,7 @@ export async function POST(
       return NextResponse.json({ data: userNewRoom.notifications }, { status: 200 });
     } catch (err) {
       return NextResponse.json(
-        { error: "error accepting invitation" },
+        { error: `error accepting invitation: ${err}` },
         { status: 400 }
       );
     }

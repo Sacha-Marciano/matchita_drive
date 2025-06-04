@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import connectToDB from "@/app/lib/mongodb";
 import { NextResponse } from "next/server";
-import { addNotification, findUserByEmail } from "@/app/database/services/userServices";
+import { addNotification } from "@/app/database/services/userServices";
 
 export async function POST(req: Request) {
   await connectToDB();
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   if (!session?.user?.email)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await findUserByEmail(session.user.email);
+//   const user = await findUserByEmail(session.user.email);
 
   const { userId, payload } = await req.json();
 

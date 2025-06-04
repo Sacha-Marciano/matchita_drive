@@ -9,7 +9,6 @@ import { IDocument } from "@/app/database/models/documents";
 import { format } from "date-fns";
 import { IUser } from "@/app/database/models/users";
 import InviteUserModal from "../modals/InviteUserModal";
-import Button from "../ui/Button";
 
 type Props = {
   room: IRoom;
