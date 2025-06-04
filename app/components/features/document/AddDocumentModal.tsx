@@ -2,13 +2,9 @@
 
 // ─── Framework Imports ───────────────────────────────────────
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { signOut } from "next-auth/react";
 
 // ─── Auth ────────────────────────────────────────────────────
 import { Session } from "next-auth";
-
-// ─── Third-Party Libraries ───────────────────────────────────
-import axios from "axios";
 
 // ─── Components ──────────────────────────────────────────────
 import DocCard from "./DocCard";

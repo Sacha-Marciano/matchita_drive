@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function ExtractionAnimation() {
   const lineVariants = {
-    initial: (i: number) => ({
+    initial: () => ({
       opacity: 0,
       y: 10,
       x: 0,
