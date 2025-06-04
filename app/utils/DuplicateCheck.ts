@@ -1,5 +1,4 @@
-import { IDocument } from "../database/models/documents";
-
+import { IDocument } from "@/app/types";
 
 // Cosine similarity between two vectors
 const cosineSimilarity = (a: number[], b: number[]) => {
@@ -15,12 +14,12 @@ const cosineSimilarity = (a: number[], b: number[]) => {
 export const duplicateCheck = async (
   documents: IDocument[],
   newEmbedding: number[],
-  newUrl: string | null,
-): Promise< IDocument  | null> => {
+  newUrl: string | null
+): Promise<IDocument | null> => {
   const SIM_THRESHOLD = 0.95;
 
   // Step 1: Check for exact URL match
-  const urlDuplicate = documents.find(doc => doc.googleDocsUrl === newUrl);
+  const urlDuplicate = documents.find((doc) => doc.googleDocsUrl === newUrl);
   if (urlDuplicate) return urlDuplicate;
 
   // Step 2: Check vector similarity
@@ -33,4 +32,3 @@ export const duplicateCheck = async (
 
   return null; // No duplicate found
 };
-

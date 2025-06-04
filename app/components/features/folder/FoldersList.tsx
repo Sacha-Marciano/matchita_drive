@@ -1,6 +1,6 @@
 import React from "react";
 import FolderCard from "./FolderCard";
-import { IDocument } from "@/app/database/models/documents";
+import { IDocument } from "@/app/types";
 
 const FoldersList = ({
   folders,

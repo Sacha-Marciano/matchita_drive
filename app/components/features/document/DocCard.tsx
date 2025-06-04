@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import Button from "../../shared/ui/Button";
 import EditableDisplay from "../../shared/ui/EditableDisplay";
-import { IDocument } from "@/app/database/models/documents";
+import { IDocument } from "@/app/types";
 import { Dispatch, SetStateAction, useState } from "react";
 import OptionsMenu from "../../shared/ui/OptionMenu";
 import { IRoom } from "@/app/database/models/rooms";
@@ -200,7 +200,7 @@ export default function DocCard({
                 handleCopy();
               }}
             >
-             {isCopied ? "Copied !" : "Copy Teaser"}
+              {isCopied ? "Copied !" : "Copy Teaser"}
             </Button>
           </div>
         </div>

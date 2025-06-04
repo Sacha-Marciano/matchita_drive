@@ -7,7 +7,7 @@ import { extractTextFromGoogleDoc } from "@/app/utils/extractText";
 import Select from "../../shared/ui/Select";
 import { duplicateCheck } from "@/app/utils/DuplicateCheck";
 import { IRoom } from "@/app/database/models/rooms";
-import { IDocument } from "@/app/database/models/documents";
+import { IDocument } from "@/app/types";
 import { Session } from "next-auth";
 import VectorizationAnimation from "../../animations/EmbedAnimation";
 import DuplicateCheckAnimation from "../../animations/DupCheckAnimation";
@@ -385,6 +385,5 @@ export default function AddDocModal({
         </div>
       </div>
     </BaseModal>
-
   );
 }

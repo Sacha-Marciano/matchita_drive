@@ -1,16 +1,5 @@
-import mongoose, { Schema, Document, model } from "mongoose";
-
-export interface IDocument extends Document {
-  title: string;
-  googleDocsUrl: string;
-  folder: string;
-  tags: string[];
-  embedding: number[];
-  createdAt: Date;
-  baseMimeType: string;
-  googleId: string;
-  teaser:string;
-}
+import { IDocument } from "@/app/types";
+import mongoose, { Schema, model } from "mongoose";
 
 const DocumentSchema = new Schema<IDocument>(
   {
@@ -21,7 +10,7 @@ const DocumentSchema = new Schema<IDocument>(
     embedding: { type: [Number], default: [] },
     baseMimeType: { type: String, required: true },
     googleId: { type: String, required: true },
-    teaser: {type:String, required:true},
+    teaser: { type: String, required: true },
   },
   { timestamps: true }
 );

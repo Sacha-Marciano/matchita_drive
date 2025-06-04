@@ -1,5 +1,6 @@
-import Document, { IDocument } from "../models/documents";
+import Document from "../models/documents";
 import { Types } from "mongoose";
+import { IDocument } from "@/app/types";
 
 export const createDocument = (data: Partial<IDocument>) =>
   Document.create(data);

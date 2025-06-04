@@ -1,6 +1,6 @@
 // components/cards/FolderCard.tsx
 import { formatDistanceToNow } from "date-fns";
-import { IDocument } from "@/app/database/models/documents";
+import { IDocument } from "@/app/types";
 import Button from "../../shared/ui/Button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
@@ -72,14 +72,27 @@ export default function FolderCard({ folderName, documents }: FolderCardProps) {
         </Button>
       </div>
 
-{isOpen && <div className="bg-bg w-full p-4 flex flex-col gap-2 rounded-2xl">
-   {documents.map((doc,index) => {
-    return <div key={index} className="bg-bg-alt rounded-2xl p-2 w-full flex items-center justify-between ">
-        <h2 className="font-semibold">{doc.title} </h2>
-       <Button size="sm" onClick={() => window.open(doc.googleDocsUrl, "_blank")}> Open </Button>
-    </div>
-   })} </div>}
-
+      {isOpen && (
+        <div className="bg-bg w-full p-4 flex flex-col gap-2 rounded-2xl">
+          {documents.map((doc, index) => {
+            return (
+              <div
+                key={index}
+                className="bg-bg-alt rounded-2xl p-2 w-full flex items-center justify-between "
+              >
+                <h2 className="font-semibold">{doc.title} </h2>
+                <Button
+                  size="sm"
+                  onClick={() => window.open(doc.googleDocsUrl, "_blank")}
+                >
+                  {" "}
+                  Open{" "}
+                </Button>
+              </div>
+            );
+          })}{" "}
+        </div>
+      )}
     </div>
   );
 }
