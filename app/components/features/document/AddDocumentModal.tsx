@@ -1,27 +1,51 @@
 "use client";
 
-import Button from "../../shared/ui/Button";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import axios from "axios";
-import { extractTextFromGoogleDoc } from "@/app/utils/extractText";
-import Select from "../../shared/ui/Select";
-import { duplicateCheck } from "@/app/utils/DuplicateCheck";
-import { IRoom } from "@/app/types";
-import { IDocument } from "@/app/types";
+// ─── Framework Imports ───────────────────────────────────────
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { signOut } from "next-auth/react";
+
+// ─── Auth ────────────────────────────────────────────────────
 import { Session } from "next-auth";
+
+// ─── Third-Party Libraries ───────────────────────────────────
+import axios from "axios";
+
+// ─── Components ──────────────────────────────────────────────
+import DocCard from "./DocCard";
+
+// ─── UI & Layout ─────────────────────────────────────────────
+import Button from "../../shared/ui/Button";
+import Select from "../../shared/ui/Select";
+import BaseModal from "../../shared/modals/BaseModal";
+
+// ─── Animations ─────────────────────────────────────────────
 import VectorizationAnimation from "../../animations/EmbedAnimation";
 import DuplicateCheckAnimation from "../../animations/DupCheckAnimation";
 import ClassificationAnimation from "../../animations/ClassifyAnimation";
-import { signOut } from "next-auth/react";
-import DocCard from "./DocCard";
-import BaseModal from "../../shared/modals/BaseModal";
+import ExtractionAnimation from "../../animations/ExtractionAnimation";
 
-interface DriveFile {
-  id: string;
-  name: string;
-  mimeType: string;
-  webViewLink: string;
-}
+// ─── Types ───────────────────────────────────────────────────
+import { DriveFile, IRoom, IDocument } from "@/app/types";
+
+// ─── Utils / Constants ───────────────────────────────────────
+import {
+  fetchFiles,
+  handleSaveDuplicate,
+  handleTextUpload,
+} from "./DocumentMethods";
+
+// ─── Prop Types ───────────────────────────────────────────────────
+type AddDocModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  session: Session | null;
+  room: IRoom;
+  documents: IDocument[];
+  setDocuments: Dispatch<SetStateAction<IDocument[]>>;
+  setShowSignoutMessage: Dispatch<SetStateAction<boolean>>;
+};
+
+// ─────────────────────────────────────────────────────────────
 
 export default function AddDocModal({
   isOpen,
@@ -31,29 +55,20 @@ export default function AddDocModal({
   documents,
   setDocuments,
   setShowSignoutMessage,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  session: Session | null;
-  room: IRoom;
-  documents: IDocument[];
-  setDocuments: Dispatch<SetStateAction<IDocument[]>>;
-  setShowSignoutMessage: Dispatch<SetStateAction<boolean>>;
-}) {
+}: AddDocModalProps) {
+
+  // ─── State ────────────────────────────────────────────────
   const [files, setFiles] = useState<DriveFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null);
   const [actualVector, setActualVector] = useState<number[] | null>(null);
   const [actualText, setActualText] = useState<string | null>(null);
   const [options, setOptions] = useState<
-    | {
-        name: string;
-        value: string;
-      }[]
-    | null
+    { name: string; value: string }[] | null
   >(null);
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [duplicate, setDuplicate] = useState<IDocument | null>(null);
   const [step, setStep] = useState<
+    | "extract"
     | "embed"
     | "duplicate-check"
     | "classify"
@@ -62,261 +77,44 @@ export default function AddDocModal({
     | null
   >(null);
 
-  const handleExtractText = async () => {
-    if (!selectedFile || !session?.accessToken) return;
+  // ─── Effects ──────────────────────────────────────────────
+  useEffect(() => {
+    // Fetches files from drive and set them in state variable
+    fetchFiles(session, setFiles, setOptions, setShowSignoutMessage);
+  }, [session]);
 
-    const { id, mimeType, name } = selectedFile;
-
-    if (mimeType === "application/vnd.google-apps.document") {
-      const res = await axios.get(
-        `https://docs.googleapis.com/v1/documents/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-        }
-      );
-
-      const text = extractTextFromGoogleDoc(res.data);
-      return text;
-    } else if (mimeType === "application/vnd.google-apps.spreadsheet") {
-      const res = await axios.get(
-        `https://sheets.googleapis.com/v4/spreadsheets/${id}/values/A1:Z1000`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-        }
-      );
-
-      const rows = res.data.values || [];
-      const text = rows.map((row: string[]) => row.join(" | ")).join("\n");
-      return text;
-    } else if (mimeType === "application/pdf") {
-      try {
-        // 1. Copy and convert the PDF to a Google Doc
-        const convertRes = await axios.post(
-          `https://www.googleapis.com/drive/v3/files/${id}/copy`,
-          {
-            name: `${name}-converted`,
-            mimeType: "application/vnd.google-apps.document",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${session.accessToken}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const convertedDocId = convertRes.data.id;
-
-        // 2. Wait a second to let the conversion settle (optional but safe)
-        await new Promise((r) => setTimeout(r, 1000));
-
-        // 3. Fetch the converted doc
-        const docRes = await axios.get(
-          `https://docs.googleapis.com/v1/documents/${convertedDocId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${session.accessToken}`,
-            },
-          }
-        );
-
-        const text = extractTextFromGoogleDoc(docRes.data);
-        return text;
-      } catch (err) {
-        console.error("PDF conversion error:", err);
-      }
-    } else {
-      return null;
-    }
-  };
+  // ─── Handlers ─────────────────────────────────────────────
 
   const handleSubmit = async () => {
-    if (!selectedFile || !session?.accessToken) return;
-
-    const { id, mimeType } = selectedFile;
-
-    const extractedText = await handleExtractText();
-
-    if (extractedText == null) {
-      console.error("File type not supported");
-      return;
-    }
-
-    setActualText(extractedText);
-
-    try {
-      setStep("embed");
-      const embedRes = await fetch(
-        "https://fastapi-gemini-571768511871.us-central1.run.app/embed",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: extractedText }),
-        }
-      );
-
-      const embedData = await embedRes.json();
-      setActualVector(embedData.embeddings);
-
-      setStep("duplicate-check");
-      const duplicateFound = await duplicateCheck(
-        documents,
-        embedData.embeddings,
-        selectedFile?.webViewLink || "no url"
-      );
-
-      if (duplicateFound != null) {
-        setStep("duplicate-found");
-        setDuplicate(duplicateFound);
-        return;
-      }
-
-      setStep("classify");
-      const classRes = await fetch(
-        "https://fastapi-gemini-571768511871.us-central1.run.app/classify",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text: extractedText,
-            folders: documents.map((doc) => doc.folder),
-            tags: documents.map((doc) => doc.tags).flat(),
-          }),
-        }
-      );
-
-      const classData = await classRes.json();
-
-      const docToSave = {
-        title: classData.title,
-        googleDocsUrl: selectedFile?.webViewLink || "no url",
-        folder: classData.folder,
-        tags: classData.tags,
-        embedding: embedData.embeddings,
-        createdAt: new Date(),
-        baseMimeType: mimeType,
-        googleId: id,
-        teaser: classData.teaser,
-      };
-
-      const saveRes = await fetch("/api/doch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          document: docToSave,
-          roomId: room._id,
-        }),
-      });
-
-      const saveData = await saveRes.json();
-
-      setStep(null);
-
-      if (saveRes.status === 201) {
-        onClose();
-        setDocuments([...documents, saveData.data.newDoc]);
-        setActualText(null);
-        setActualVector(null);
-      }
-    } catch (err) {
-      setStep("error");
-      console.error(err);
-      return;
-    }
+    await handleTextUpload(
+      session,
+      selectedFile,
+      documents,
+      room,
+      onClose,
+      setActualText,
+      setDuplicate,
+      setDocuments,
+      setActualVector,
+      setStep
+    );
   };
 
   const handleSaveAnyway = async () => {
-    if (!selectedFile || !session?.accessToken) return;
-
-    const { id, mimeType } = selectedFile;
-
-    try {
-      setStep("classify");
-      const classRes = await fetch(
-        "https://fastapi-gemini-571768511871.us-central1.run.app/classify",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text: actualText,
-            folders: documents.map((doc) => doc.folder),
-            tags: documents.map((doc) => doc.tags).flat(),
-          }),
-        }
-      );
-
-      const classData = await classRes.json();
-
-      const docToSave = {
-        title: classData.title,
-        googleDocsUrl: selectedFile?.webViewLink || "no url",
-        folder: classData.folder,
-        tags: classData.tags,
-        embedding: actualVector,
-        createdAt: new Date(),
-        baseMimeType: mimeType,
-        googleId: id,
-        teaser: classData.teaser,
-      };
-
-      const saveRes = await fetch("/api/doch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          document: docToSave,
-          roomId: room._id,
-        }),
-      });
-
-      setStep(null);
-
-      if (saveRes.status === 201) {
-        onClose();
-        setDocuments([...documents, docToSave as IDocument]);
-      }
-    } catch (err) {
-      setStep("error");
-      console.error(err);
-      return;
-    }
+    await handleSaveDuplicate(
+      session,
+      selectedFile,
+      actualText,
+      actualVector,
+      documents,
+      room,
+      onClose,
+      setDocuments,
+      setStep
+    );
   };
 
-  //   Fetches files on session mount
-  useEffect(() => {
-    const fetchFiles = async () => {
-      try {
-        if (!session?.accessToken) return;
-
-        const res = await axios.get(
-          "https://www.googleapis.com/drive/v3/files",
-          {
-            headers: {
-              Authorization: `Bearer ${session.accessToken}`,
-            },
-            params: {
-              fields: "files(id,name,mimeType,webViewLink)",
-            },
-          }
-        );
-        setFiles(res.data.files);
-        setOptions(
-          res.data.files.map((file: DriveFile) => {
-            return { name: file.name, value: file.id };
-          })
-        );
-      } catch (err) {
-        console.error(err, ", Signin out");
-        setShowSignoutMessage(true);
-        signOut();
-      }
-    };
-
-    fetchFiles();
-  }, [session]);
+  // ─── Render ───────────────────────────────────────────────
 
   return (
     <BaseModal isOpen={isOpen} onClose={onClose}>
@@ -344,6 +142,7 @@ export default function AddDocModal({
               <p>Let Matchita do the work !</p>
             </div>
           )}
+          {step === "extract" && <ExtractionAnimation />}
           {step === "embed" && <VectorizationAnimation />}
           {step === "duplicate-check" && <DuplicateCheckAnimation />}
           {step === "classify" && <ClassificationAnimation />}
