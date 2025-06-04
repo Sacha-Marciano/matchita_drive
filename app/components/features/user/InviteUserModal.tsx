@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
-import { IUser } from "@/app/database/models/users";
+import { IUser } from "@/app/types";
 import Button from "../../shared/ui/Button";
 import { useSession } from "next-auth/react";
 import { IRoom } from "@/app/types";

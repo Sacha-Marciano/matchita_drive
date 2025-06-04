@@ -16,7 +16,7 @@ import Button from "./components/shared/ui/Button";
 
 // ─── Types ───────────────────────────────────────────────────
 import { IRoom } from "@/app/types";
-import { IUser } from "./database/models/users";
+import { IUser } from "@/app/types";
 
 // ─────────────────────────────────────────────────────────────
 

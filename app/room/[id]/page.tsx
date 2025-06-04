@@ -19,7 +19,7 @@ import Tabs from "@/app/components/shared/ui/Tabs";
 
 // ─── Types ───────────────────────────────────────────────────
 import { IRoom } from "@/app/types";
-import { IUser } from "@/app/database/models/users";
+import { IUser } from "@/app/types";
 import { IDocument } from "@/app/types";
 import FoldersList from "@/app/components/features/folder/FoldersList";
 import DocsList from "@/app/components/features/document/DocsList";

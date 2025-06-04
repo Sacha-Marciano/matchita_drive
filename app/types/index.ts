@@ -23,6 +23,28 @@ export interface IDocument extends Document {
   teaser: string;
 }
 
+export interface INotification extends Document {
+  _id: Types.ObjectId;
+  type: "invitation" | "ai-chat" | "system";
+  message: string;
+  metadata?: {
+    type: string;
+    payload: string;
+  };
+  read: boolean;
+  createdAt: Date;
+}
+
+export interface IUser extends Document {
+  email: string;
+  name: string;
+  avatar: string;
+  roomIds: Types.ObjectId[]; // rooms the user has access to
+  lastLogin: Date;
+  createdAt: Date;
+  notifications: INotification[];
+}
+
 export interface DriveFile {
   id: string;
   name: string;

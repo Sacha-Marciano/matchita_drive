@@ -7,7 +7,7 @@ import EditableDisplay from "@/app/components/shared/ui/EditableDisplay";
 import { IRoom } from "@/app/types";
 import { IDocument } from "@/app/types";
 import { format } from "date-fns";
-import { IUser } from "@/app/database/models/users";
+import { IUser } from "@/app/types";
 import InviteUserModal from "../user/InviteUserModal";
 
 type Props = {

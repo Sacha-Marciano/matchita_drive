@@ -12,7 +12,7 @@ import Loading from "@/app/components/layout/Loading";
 import Button from "@/app/components/shared/ui/Button";
 
 // ─── Types ───────────────────────────────────────────────────
-import { IUser } from "@/app/database/models/users";
+import { IUser } from "@/app/types";
 import InfoRow from "../components/shared/ui/InfoRow";
 
 // ─────────────────────────────────────────────────────────────

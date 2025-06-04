@@ -1,4 +1,4 @@
-import { INotification } from "@/app/database/models/users";
+import { INotification } from "@/app/types";
 import { cn } from "@/app/utils/cn";
 import { formatDistanceToNow } from "date-fns";
 import React, { Dispatch, SetStateAction } from "react";

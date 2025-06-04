@@ -1,5 +1,6 @@
-import User, { IUser } from "../models/users";
+import User from "../models/users";
 import { Types } from "mongoose";
+import { IUser } from "@/app/types";
 
 export const findUserByEmail = (email: string) => User.findOne({ email });
 
