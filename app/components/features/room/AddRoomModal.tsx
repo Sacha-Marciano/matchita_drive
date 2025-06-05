@@ -1,30 +1,48 @@
 "use client";
 
+// ─── Framework & Core Imports ─────────────────────────────────
 import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
+
+// ─── Auth / Session ──────────────────────────────────────────
+
+// ─── Components ──────────────────────────────────────────────
 import Button from "../../shared/ui/Button";
-import { IRoom } from "@/app/types";
 import BaseModal from "../../shared/modals/BaseModal";
 
+// ─── UI & Layout ─────────────────────────────────────────────
+
+// ─── Types ───────────────────────────────────────────────────
+import { IRoom } from "@/app/types";
+
+// ─── Utils / Services / Constants ────────────────────────────
+
+// ─── Prop Types ──────────────────────────────────────────────
+type Props = {
+  isOpen: boolean;
+  onClose: () => void;
+  setRooms: Dispatch<SetStateAction<IRoom[]>>;
+  rooms: IRoom[];
+};
+
+// ─── Component ───────────────────────────────────────────────
 export default function AddRoomModal({
   isOpen,
   onClose,
   setRooms,
   rooms,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  setRooms: Dispatch<SetStateAction<IRoom[]>>;
-  rooms: IRoom[];
-}) {
+}: Props) {
+
+  // ─── Hooks ────────────────────────────────────────────────
   const [title, setTitle] = useState("");
   const [avatar, setAvatar] = useState("");
   const router = useRouter();
 
+  // ─── Handlers ─────────────────────────────────────────────
   const handleSubmit = async () => {
     let newAvatar = avatar;
     if (newAvatar === "") {
-      const randIndex = Math.floor(Math.random() * 5 + 1); // 0 to 5
+      const randIndex = Math.floor(Math.random() * 5 + 1); // 1 to 5
       newAvatar = `/avatars/rooms/${randIndex}.png`;
     }
 
@@ -40,10 +58,11 @@ export default function AddRoomModal({
       setTitle("");
       setAvatar("");
       setRooms([...rooms, room.data]);
-      router.refresh(); // Refresh room list
+      router.refresh();
     }
   };
 
+  // ─── Render ───────────────────────────────────────────────
   return (
     <BaseModal isOpen={isOpen} onClose={onClose}>
       <h2 className="text-lg font-bold mb-4">Create a Room</h2>
@@ -73,7 +92,7 @@ export default function AddRoomModal({
           <Button onClick={onClose} variant="secondary">
             Cancel
           </Button>
-          <Button onClick={() => handleSubmit()}>Create</Button>
+          <Button onClick={handleSubmit}>Create</Button>
         </div>
       </div>
     </BaseModal>

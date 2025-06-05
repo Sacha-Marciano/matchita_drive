@@ -1,15 +1,23 @@
 "use client";
 
+// ─── Framework & Core Imports ─────────────────────────────────
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+
+// ─── Icons ───────────────────────────────────────────────────
 import { FileText, FolderKanban, CalendarDays, User } from "lucide-react";
+
+// ─── Components ──────────────────────────────────────────────
 import EditableDisplay from "@/app/components/shared/ui/EditableDisplay";
-import { IRoom } from "@/app/types";
-import { IDocument } from "@/app/types";
-import { format } from "date-fns";
-import { IUser } from "@/app/types";
 import InviteUserModal from "../user/InviteUserModal";
 
+// ─── Types ───────────────────────────────────────────────────
+import { IRoom, IDocument, IUser } from "@/app/types";
+
+// ─── Utils / Services / Constants ────────────────────────────
+import { format } from "date-fns";
+
+// ─── Prop Types ──────────────────────────────────────────────
 type Props = {
   room: IRoom;
   documents: IDocument[];
@@ -23,11 +31,14 @@ type ViewerInfo = {
   role?: string;
 };
 
+// ─── Component ───────────────────────────────────────────────
 export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
+  // ─── State ────────────────────────────────────────────────
   const [owner, setOwner] = useState<ViewerInfo | null>(null);
   const [viewers, setViewers] = useState<ViewerInfo[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  // ─── Derived Data ─────────────────────────────────────────
   const folderCount = new Set(documents.map((doc) => doc.folder)).size;
   const createdAt = format(new Date(room.createdAt), "MMM dd, yyyy");
 
@@ -54,6 +65,7 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
     },
   ];
 
+  // ─── Effects ──────────────────────────────────────────────
   useEffect(() => {
     const fetchViewerInfo = async () => {
       try {
@@ -67,12 +79,8 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
 
         if (res.ok && Array.isArray(data.data)) {
           const allUsers = data.data;
-          setOwner(
-            allUsers.find((user: IUser) => user._id === room.ownerId) || null
-          );
-          setViewers(
-            allUsers.filter((user: IUser) => user._id !== room.ownerId)
-          );
+          setOwner(allUsers.find((user: IUser) => user._id === room.ownerId) || null);
+          setViewers(allUsers.filter((user: IUser) => user._id !== room.ownerId));
         } else {
           console.error("Failed to load viewer info:", data?.error);
         }
@@ -84,6 +92,16 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
     fetchViewerInfo();
   }, [room.ownerId, room.viewerIds]);
 
+  // ─── Handlers ─────────────────────────────────────────────
+  const handleInviteClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // ─── Render ───────────────────────────────────────────────
   return (
     <motion.div
       className="w-full bg-bg-alt text-matchita-text-alt rounded-2xl shadow p-6 mb-6 flex flex-col gap-4"
@@ -91,6 +109,7 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
+      {/* ─── Room Title ───────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <EditableDisplay
           text={room.title}
@@ -100,6 +119,7 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
         />
       </div>
 
+      {/* ─── Room Stats ───────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
         {stats.map((stat) => (
           <div
@@ -113,20 +133,20 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
         ))}
       </div>
 
-      {/* Viewer Info Table */}
+      {/* ─── Viewer Info Table ────────────────────────────── */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between px-2 text-sm">
             <p className="font-semibold">Collaborators</p>
             <div
-              onClick={() => setIsModalOpen(true)}
+              onClick={handleInviteClick}
               className="cursor-pointer border-b px-0.5"
             >
               Invite
             </div>
           </div>
           <div className="w-full h-[100px] overflow-x-auto rounded-2xl border border-matchita-600 bg-background shadow-sm">
-            <table className="min-w-full table-auto text-sm text-left ">
+            <table className="min-w-full table-auto text-sm text-left">
               <thead className="bg-muted text-muted-foreground border-b-2 divide-matchita-800">
                 <tr>
                   <th className="px-2 py-1.5 font-medium">Name</th>
@@ -134,16 +154,12 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
                   <th className="px-2 py-1.5 font-medium">Role</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-matchita-800 ">
+              <tbody className="divide-y divide-matchita-800">
                 {owner && (
                   <tr className="hover:bg-muted/50 transition">
-                    <td className="px-2 py-1.5 font-semibold">
-                      {owner.name || "Owner"}
-                    </td>
+                    <td className="px-2 py-1.5 font-semibold">{owner.name || "Owner"}</td>
                     <td className="px-2 py-1.5">{owner.email}</td>
-                    <td className="px-2 py-1.5 font-semibold">
-                      {owner.role || "Owner"}
-                    </td>
+                    <td className="px-2 py-1.5 font-semibold">{owner.role || "Owner"}</td>
                   </tr>
                 )}
                 {viewers.map((viewer) => (
@@ -158,16 +174,14 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
           </div>
         </div>
 
+        {/* ─── Placeholder for Future Features ─────────────── */}
         <div className="p-4 rounded-xl border border-matchita-800 flex items-center justify-center text-muted-foreground">
           Coming soon: User activity / Invite system
         </div>
       </div>
 
-      <InviteUserModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        room={room}
-      />
+      {/* ─── Invite Modal ─────────────────────────────────── */}
+      <InviteUserModal isOpen={isModalOpen} onClose={handleCloseModal} room={room} />
     </motion.div>
   );
 }

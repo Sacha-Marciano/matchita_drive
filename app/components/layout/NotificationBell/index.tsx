@@ -1,27 +1,43 @@
 "use client";
 
-import { Bell } from "lucide-react";
+// ─── Framework & Core Imports ─────────────────────────────────
 import { useEffect, useRef, useState } from "react";
-import { INotification } from "@/app/types";
 import { formatDistanceToNow } from "date-fns";
+
+// ─── UI & Layout ─────────────────────────────────────────────
+import { Bell } from "lucide-react";
+
+// ─── Types ───────────────────────────────────────────────────
+import { INotification } from "@/app/types";
+
+// ─── Utils / Services / Constants ────────────────────────────
 import { cn } from "@/app/utils/cn";
+
+// ─── Components ──────────────────────────────────────────────
 import InviteNotif from "@/app/components/shared/ui/notifications/InviteNotif";
 
+// ─── Prop Types ──────────────────────────────────────────────
 interface NotificationBellProps {
   notifications: INotification[];
 }
 
+// ─── Component ───────────────────────────────────────────────
 export default function NotificationBell({
   notifications,
 }: NotificationBellProps) {
+  // ─── State ────────────────────────────────────────────────
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const [notificationList, setNotificationList] =
     useState<INotification[]>(notifications);
 
+  // ─── Refs ─────────────────────────────────────────────────
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // ─── Derived Values ───────────────────────────────────────
   const unread = notificationList.filter((n) => !n.read).length;
 
-  // 👇 Close dropdown when clicking outside
+  // ─── Effects ──────────────────────────────────────────────
+  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -43,8 +59,10 @@ export default function NotificationBell({
     };
   }, [open]);
 
+  // ─── Render ───────────────────────────────────────────────
   return (
     <div className="relative" ref={dropdownRef}>
+      {/* ── Notification Icon ── */}
       <button
         onClick={() => setOpen(!open)}
         className="relative p-2 rounded-full hover:bg-gray-100 hover:text-matchita-text-alt transition cursor-pointer"
@@ -56,8 +74,9 @@ export default function NotificationBell({
         )}
       </button>
 
+      {/* ── Dropdown Panel ── */}
       {open && (
-        <div className="absolute right-0 mt-2 w-80 max-h-96  bg-bg-alt text-matchita-text-alt border-2 rounded-xl shadow-lg z-50 border-white">
+        <div className="absolute right-0 mt-2 w-80 max-h-96 bg-bg-alt text-matchita-text-alt border-2 rounded-xl shadow-lg z-50 border-white">
           <div className="p-3 font-semibold border-b">Notifications</div>
 
           <div
@@ -70,6 +89,7 @@ export default function NotificationBell({
               }
             `}</style>
 
+            {/* ── Notification Content ── */}
             {notificationList.length === 0 ? (
               <div className="p-4 text-sm text-matchita-500">
                 No notifications yet.
@@ -98,7 +118,6 @@ export default function NotificationBell({
                       >
                         <div className="font-medium">{notif.message}</div>
                         <div>Create component for this notif</div>
-
                         <div className="text-xs text-matchita-400 mt-1">
                           {formatDistanceToNow(new Date(notif.createdAt), {
                             addSuffix: true,

@@ -56,11 +56,20 @@ export interface DriveFile {
 }
 
 export type IStep =
-    | "extract"
-    | "embed"
-    | "duplicate-check"
-    | "classify"
-    | "save"
-    | "duplicate-found"
-    | "error"
-    | null;
+  | "extract"
+  | "embed"
+  | "duplicate-check"
+  | "classify"
+  | "save"
+  | "duplicate-found"
+  | "error"
+  | null;
+
+export interface IMessage {
+  role: "user" | "agent";
+  content: {
+    text: string;
+    source?: { title: string; url: string };
+    agentNote?: string;
+  };
+}

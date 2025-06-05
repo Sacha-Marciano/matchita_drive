@@ -1,12 +1,18 @@
-import React from "react";
-import FolderCard from "./FolderCard";
-import { IDocument } from "@/app/types";
+"use client";
 
-const FoldersList = ({
-  folders,
-}: {
+// ─── Types ────────────────────────────────────────────────────
+import type { IDocument } from "@/app/types";
+
+// ─── Components ──────────────────────────────────────────────
+import FolderCard from "./FolderCard";
+
+// ─── Props ────────────────────────────────────────────────────
+type Props = {
   folders: Record<string, IDocument[]> | null;
-}) => {
+};
+
+// ─── Component ────────────────────────────────────────────────
+export default function FoldersList({ folders }: Props) {
   return (
     <div className="h-[70vh] overflow-y-auto flex flex-col gap-4">
       {folders &&
@@ -19,6 +25,4 @@ const FoldersList = ({
         ))}
     </div>
   );
-};
-
-export default FoldersList;
+}

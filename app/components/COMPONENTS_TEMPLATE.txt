@@ -1,35 +1,31 @@
 "use client";
 
 // ─── Framework & Core Imports ─────────────────────────────────
-import { Dispatch, SetStateAction } from "react";
+
+// ─── Auth / Session ──────────────────────────────────────────
 
 // ─── Components ──────────────────────────────────────────────
-import DocCard from "./DocCard";
+
+// ─── UI & Layout ─────────────────────────────────────────────
 
 // ─── Types ───────────────────────────────────────────────────
-import type { IDocument, IRoom } from "@/app/types";
+
+// ─── Utils / Services / Constants ────────────────────────────
 
 // ─── Prop Types ──────────────────────────────────────────────
 type Props = {
-  docs: IDocument[];
-  setDocList: Dispatch<SetStateAction<IDocument[]>>;
-  room: IRoom;
 };
 
 // ─── Component ───────────────────────────────────────────────
-export default function DocsList({ docs, setDocList, room }: Props) {
+export default function DocumentModal({
+}: Props) {
+  // ─── Hooks ────────────────────────────────────────────────
+  
+  // ─── State ────────────────────────────────────────────────
+
+
+  // ─── Handlers ─────────────────────────────────────────────
+
   // ─── Render ───────────────────────────────────────────────
-  return (
-    <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 h-[70vh] overflow-y-auto">
-      {docs.map((doc, index) => (
-        <DocCard
-          key={index}
-          document={doc}
-          docList={docs}
-          setDocList={setDocList}
-          room={room}
-        />
-      ))}
-    </div>
-  );
+
 }

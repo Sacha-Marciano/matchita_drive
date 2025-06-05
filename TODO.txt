@@ -2,10 +2,7 @@
 
 ##IN PROGRESS
                 missing file tab
-
-
 ### BACKLOG
-                navigation menu
                 Discrepencies check (file format, value format , ect...)
                     (send chat to user on refresh and give advice : in folder "financial plannin" you have budget x 3 and one cost documents, consider moving the cost document to another folder or renaming the folder to finance)
                 Translate answers based on the question (+ translate docs)
@@ -16,15 +13,12 @@
                 review viewer permissions
                 style viewers modal
                 review profile (add viewers and viewers modal)
-                add "added by " in doc modals,schema types ect.
+                add "added by " in doc modals,schema types ect. and prevent deletion if not owner
+                navigation menu
                 
-
-
-
 #### final 
                 Deploy on cloud run
                 Include animations for chat thinking
-                Rework animations
+                Rework all animations
                 rework prompts
-                clean code (CLAUDE + prompt from GPT to keep regularity : api routes, components, pages)
-                refactor code (diviser pour mieux regner)
+                refactor component with 100+ lines, pages with 200+ lines

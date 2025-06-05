@@ -1,9 +1,16 @@
-import { DriveFile, IDocument } from "@/app/types";
-import { extractTextFromGoogleDoc } from "@/app/utils/extractText";
+// ─── Framework & Core Imports ─────────────────────────────────
 import axios from "axios";
+import { Dispatch, SetStateAction } from "react";
+
+// ─── Auth / Session ──────────────────────────────────────────
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
-import { Dispatch, SetStateAction } from "react";
+
+// ─── Types ─────────────────────────────────────────────
+import { DriveFile, IDocument } from "@/app/types";
+
+// ─── Utils / Constants ──────────────────────────────────────────────
+import { extractTextFromGoogleDoc } from "@/app/utils/extractText";
 
 export const fetchFiles = async (
   session: Session | null,

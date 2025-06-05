@@ -1,11 +1,18 @@
-import { formatDistanceToNow } from "date-fns";
-import Button from "../../shared/ui/Button";
-import EditableDisplay from "../../shared/ui/EditableDisplay";
-import { IDocument } from "@/app/types";
-import { Dispatch, SetStateAction, useState } from "react";
-import OptionsMenu from "../../shared/ui/OptionMenu";
-import { IRoom } from "@/app/types";
+"use client";
 
+// ─── Framework & Core Imports ─────────────────────────────────
+import { useState, Dispatch, SetStateAction } from "react";
+import { formatDistanceToNow } from "date-fns";
+
+// ─── UI & Layout ─────────────────────────────────────────────
+import Button from "@/app/components/shared/ui/Button";
+import EditableDisplay from "@/app/components/shared/ui/EditableDisplay";
+import OptionsMenu from "@/app/components/shared/ui/OptionMenu";
+
+// ─── Types ───────────────────────────────────────────────────
+import type { IDocument, IRoom } from "@/app/types";
+
+// ─── Prop Types ──────────────────────────────────────────────
 interface DocCardProps {
   document: IDocument;
   docList?: IDocument[];
@@ -13,31 +20,35 @@ interface DocCardProps {
   room?: IRoom;
 }
 
+// ─── Component ───────────────────────────────────────────────
 export default function DocCard({
   document,
   docList,
   setDocList,
   room,
 }: DocCardProps) {
+  // ─── State ────────────────────────────────────────────────
   const [mode, setMode] = useState<"normal" | "delete" | "teaser">("normal");
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isCopied, setIsCopied] = useState(false);
 
+  // ─── Handlers ─────────────────────────────────────────────
   const handleDocEdit = async (newValue: string) => {
     if (!docList || !setDocList) return;
-    const editRes = await fetch(`/api/doch/${document._id}`, {
+
+    const res = await fetch(`/api/doch/${document._id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newValue }),
     });
-    const editData = await editRes.json();
 
-    const filteredList = docList.filter((doc) => doc._id != editData.data._id);
-    // setDoc(editData.data);
-    setDocList([editData.data, ...filteredList]);
+    const editData = await res.json();
+    const updatedList = docList.filter((doc) => doc._id !== editData.data._id);
+    setDocList([editData.data, ...updatedList]);
   };
 
   const handleDocDelete = async () => {
     if (!room || !docList || !setDocList) return;
+
     try {
       const res = await fetch(`/api/doch/${document._id}?roomId=${room._id}`, {
         method: "DELETE",
@@ -49,38 +60,30 @@ export default function DocCard({
         return;
       }
 
-      const deleteData = await res.json();
-      const deletedDoc = deleteData.data;
-
-      // Step 1: Remove the deleted doc from UI
+      const deletedDoc = (await res.json()).data;
       const filteredList = docList.filter((doc) => doc._id !== deletedDoc._id);
       setDocList(filteredList);
       setMode("normal");
 
-      // Step 2: Check if deleted folders or tags are now unused
       const remainingFolders = new Set(filteredList.map((doc) => doc.folder));
       const remainingTags = new Set(
         filteredList.flatMap((doc) => doc.tags || [])
       );
 
-      // const deletedFolders = deletedDoc.folders || [];
-      // const deletedTags = deletedDoc.tags || [];
-
       const cleanedFolders = room.folders.filter((folder) =>
         remainingFolders.has(folder)
       );
-      const cleanedTags = room.tags.filter((tag) => remainingTags.has(tag));
+      const cleanedTags = room.tags.filter((tag) =>
+        remainingTags.has(tag)
+      );
 
-      // Step 3: If any cleanup is needed, update the room
-      const foldersChanged = cleanedFolders.length !== room.folders.length;
-      const tagsChanged = cleanedTags.length !== room.tags.length;
-
-      if (foldersChanged || tagsChanged) {
+      if (
+        cleanedFolders.length !== room.folders.length ||
+        cleanedTags.length !== room.tags.length
+      ) {
         await fetch(`/api/rooms/${room._id}`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: room.title,
             folders: cleanedFolders,
@@ -88,19 +91,20 @@ export default function DocCard({
           }),
         });
       }
-    } catch (error) {
-      console.error("Error deleting document:", error);
+    } catch (err) {
+      console.error("Error deleting document:", err);
     }
   };
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(document.teaser);
     setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 5000); // Reset after 2s
+    setTimeout(() => setIsCopied(false), 5000);
   };
 
+  // ─── Render ───────────────────────────────────────────────
   return (
-    <div className="relative border h-[251px]  p-4 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt text-matchita-text-alt">
+    <div className="relative border h-[251px] p-4 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt text-matchita-text-alt">
       {mode === "normal" && (
         <div className="h-full flex flex-col justify-between gap-4">
           {/* Header */}
@@ -121,9 +125,7 @@ export default function DocCard({
                     <Button
                       variant="delete"
                       size="sm"
-                      onClick={() => {
-                        setMode("delete");
-                      }}
+                      onClick={() => setMode("delete")}
                     >
                       Delete
                     </Button>
@@ -158,7 +160,7 @@ export default function DocCard({
             <div className="text-xs text-matchita-400">No tags</div>
           )}
 
-          {/* Action Button */}
+          {/* Actions */}
           <Button
             size="lg"
             onClick={() => window.open(document.googleDocsUrl, "_blank")}
@@ -167,8 +169,9 @@ export default function DocCard({
           </Button>
         </div>
       )}
+
       {mode === "delete" && (
-        <div className=" flex flex-col justify-between items-center gap-4 md:gap-6 lg:gap-8">
+        <div className="flex flex-col justify-between items-center gap-4 md:gap-6 lg:gap-8">
           <p className="text-matchita-text-alt text-xl font-bold">
             Are you sure ?
           </p>
@@ -180,12 +183,13 @@ export default function DocCard({
             <Button variant="secondary" onClick={() => setMode("normal")}>
               Cancel
             </Button>
-            <Button variant="delete" onClick={() => handleDocDelete()}>
+            <Button variant="delete" onClick={handleDocDelete}>
               Delete
             </Button>
           </div>
         </div>
       )}
+
       {mode === "teaser" && (
         <div className="h-full flex flex-col justify-between items-center z-50">
           <div className="border p-2 bg-bg text-matchita-text w-full rounded-lg overflow-y-auto">
@@ -195,12 +199,8 @@ export default function DocCard({
             <Button variant="secondary" onClick={() => setMode("normal")}>
               Back
             </Button>
-            <Button
-              onClick={() => {
-                handleCopy();
-              }}
-            >
-              {isCopied ? "Copied !" : "Copy Teaser"}
+            <Button onClick={handleCopy}>
+              {isCopied ? "Copied!" : "Copy Teaser"}
             </Button>
           </div>
         </div>
