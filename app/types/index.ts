@@ -1,6 +1,7 @@
 import { Document, Types } from "mongoose";
 
 export interface IRoom extends Document {
+  _id: Types.ObjectId;
   title: string;
   avatar: string;
   ownerId: Types.ObjectId;
@@ -12,6 +13,7 @@ export interface IRoom extends Document {
 }
 
 export interface IDocument extends Document {
+  _id: Types.ObjectId;
   title: string;
   googleDocsUrl: string;
   folder: string;
@@ -36,6 +38,7 @@ export interface INotification extends Document {
 }
 
 export interface IUser extends Document {
+  _id: Types.ObjectId;
   email: string;
   name: string;
   avatar: string;
@@ -51,3 +54,13 @@ export interface DriveFile {
   mimeType: string;
   webViewLink: string;
 }
+
+export type IStep =
+    | "extract"
+    | "embed"
+    | "duplicate-check"
+    | "classify"
+    | "save"
+    | "duplicate-found"
+    | "error"
+    | null;

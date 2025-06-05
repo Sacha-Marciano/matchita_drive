@@ -7,28 +7,26 @@ import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Session } from "next-auth";
 
 // ─── Components ──────────────────────────────────────────────
-import DocCard from "./DocCard";
 
 // ─── UI & Layout ─────────────────────────────────────────────
 import Button from "../../shared/ui/Button";
 import Select from "../../shared/ui/Select";
 import BaseModal from "../../shared/modals/BaseModal";
 
-// ─── Animations ─────────────────────────────────────────────
-import VectorizationAnimation from "../../animations/EmbedAnimation";
-import DuplicateCheckAnimation from "../../animations/DupCheckAnimation";
-import ClassificationAnimation from "../../animations/ClassifyAnimation";
-import ExtractionAnimation from "../../animations/ExtractionAnimation";
-
 // ─── Types ───────────────────────────────────────────────────
-import { DriveFile, IRoom, IDocument } from "@/app/types";
+import { DriveFile, IRoom, IDocument, IStep } from "@/app/types";
 
 // ─── Utils / Constants ───────────────────────────────────────
 import {
+  classifyText,
+  embedText,
   fetchFiles,
-  handleSaveDuplicate,
-  handleTextUpload,
+  extractText,
+  // handleSaveDuplicate,
+  saveDocument,
 } from "./DocumentMethods";
+import { duplicateCheck } from "@/app/utils/DuplicateCheck";
+import Steps from "../../shared/ui/Steps";
 
 // ─── Prop Types ───────────────────────────────────────────────────
 type AddDocModalProps = {
@@ -52,25 +50,16 @@ export default function AddDocModal({
   setDocuments,
   setShowSignoutMessage,
 }: AddDocModalProps) {
-
   // ─── State ────────────────────────────────────────────────
   const [files, setFiles] = useState<DriveFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null);
   const [actualVector, setActualVector] = useState<number[] | null>(null);
   const [actualText, setActualText] = useState<string | null>(null);
-  const [options, setOptions] = useState<
-    { name: string; value: string }[] | null
-  >(null);
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [duplicate, setDuplicate] = useState<IDocument | null>(null);
-  const [step, setStep] = useState<
-    | "extract"
-    | "embed"
-    | "duplicate-check"
-    | "classify"
-    | "duplicate-found"
-    | "error"
-    | null
+  const [step, setStep] = useState<IStep>(null);
+  const [options, setOptions] = useState<
+    { name: string; value: string }[] | null
   >(null);
 
   // ─── Effects ──────────────────────────────────────────────
@@ -82,32 +71,101 @@ export default function AddDocModal({
   // ─── Handlers ─────────────────────────────────────────────
 
   const handleSubmit = async () => {
-    await handleTextUpload(
-      session,
-      selectedFile,
+    if (!selectedFile || !session?.accessToken) return;
+
+    const { id, mimeType } = selectedFile;
+
+    ///////////////////////// STEP 1 - Extract ///////////////////////////////
+    setStep("extract");
+    const extractedText = await extractText(selectedFile, session);
+    if (!extractedText) return;
+
+    setActualText(extractedText);
+    ///////////////////////// STEP 2 - Vectorize ///////////////////////////////
+    setStep("embed");
+    const embedData = await embedText(extractedText);
+    if (!embedData) return;
+
+    setActualVector(embedData.embeddings);
+    ///////////////////////// STEP 3 - Duplicate Check ///////////////////////////////
+    setStep("duplicate-check");
+    const duplicateFound = await duplicateCheck(
       documents,
-      room,
-      onClose,
-      setActualText,
-      setDuplicate,
-      setDocuments,
-      setActualVector,
-      setStep
+      embedData.embeddings,
+      selectedFile?.webViewLink || "no url"
     );
+
+    if (duplicateFound) {
+      setStep("duplicate-found");
+      setDuplicate(duplicateFound);
+      return; // Saves prompting cost by exiting the function
+    }
+    ///////////////////////// STEP 4 - Classify ///////////////////////////////
+    setStep("classify");
+    const classifyData = await classifyText(
+      extractedText,
+      room.folders,
+      room.tags
+    );
+    if (!classifyData) return;
+    ///////////////////////// STEP 5 - Create new document ///////////////////////////////
+    setStep("save");
+    const docToSave = {
+      title: classifyData.title,
+      googleDocsUrl: selectedFile?.webViewLink || "no url",
+      folder: classifyData.folder,
+      tags: classifyData.tags,
+      embedding: embedData.embeddings,
+      createdAt: new Date(),
+      baseMimeType: mimeType,
+      googleId: id,
+      teaser: classifyData.teaser,
+    };
+    ///////////////////////// STEP 6 - Save new document ///////////////////////////////
+    const saveData = await saveDocument(docToSave, room._id.toString());
+
+    setStep(null);
+    onClose();
+    setDocuments([...documents, saveData.data.newDoc]);
+    setActualText(null);
+    setActualVector(null);
   };
 
   const handleSaveAnyway = async () => {
-    await handleSaveDuplicate(
-      session,
-      selectedFile,
+    if (!selectedFile || !session?.accessToken || !actualText || !actualVector)
+      return;
+
+    const { id, mimeType } = selectedFile;
+
+    ///////////////////////// STEP 1 - Classify ///////////////////////////////
+    setStep("classify");
+    const classifyData = await classifyText(
       actualText,
-      actualVector,
-      documents,
-      room,
-      onClose,
-      setDocuments,
-      setStep
+      room.folders,
+      room.tags
     );
+    if (!classifyData) return;
+    ///////////////////////// STEP 2 - Create new document ///////////////////////////////
+    setStep("save");
+    const docToSave = {
+      title: classifyData.title,
+      googleDocsUrl: selectedFile?.webViewLink || "no url",
+      folder: classifyData.folder,
+      tags: classifyData.tags,
+      embedding: actualVector,
+      createdAt: new Date(),
+      baseMimeType: mimeType,
+      googleId: id,
+      teaser: classifyData.teaser,
+    };
+    ///////////////////////// STEP 6 - Save new document ///////////////////////////////
+    const saveData = await saveDocument(docToSave, room._id.toString());
+
+    setStep(null);
+    onClose();
+    setDocuments([...documents, saveData.data.newDoc]);
+    setActualText(null);
+    setActualVector(null);
   };
 
   // ─── Render ───────────────────────────────────────────────
@@ -132,40 +190,15 @@ export default function AddDocModal({
           />
         </div>
         <div className="h-[50vh] overflow-hidden w-full flex items-center justify-center text-center">
-          {step === null && (
-            <div className="text-lg font-semibold">
-              <p>Upload your doc,</p>
-              <p>Let Matchita do the work !</p>
-            </div>
-          )}
-          {step === "extract" && <ExtractionAnimation />}
-          {step === "embed" && <VectorizationAnimation />}
-          {step === "duplicate-check" && <DuplicateCheckAnimation />}
-          {step === "classify" && <ClassificationAnimation />}
-          {step === "duplicate-found" && duplicate != null && (
-            <div className="space-y-2 max-w-[90%]">
-              <h2 className="text-xl font-bold">
-                A duplicate document was found !
-              </h2>
-              <DocCard document={duplicate} />
-              <div className="flex items-center justify-around">
-                <Button onClick={() => setStep(null)}>Cancel</Button>
-                <Button
-                  onClick={() => handleSaveAnyway()}
-                  className="bg-yellow-500!"
-                >
-                  Save Anyway
-                </Button>
-              </div>
-            </div>
-          )}
-          {step === "error" && (
-            <p className="text-red-400 font-semibold">
-              An error occured... Please try again
-            </p>
-          )}
+          {/* steps - animations */}
+          <Steps
+            step={step}
+            setStep={setStep}
+            duplicate={duplicate}
+            handleSaveAnyway={handleSaveAnyway}
+          />
         </div>
-
+        {/* Actions */}
         <div className="flex justify-end space-x-2 pt-2">
           <Button onClick={onClose} variant="secondary">
             Cancel

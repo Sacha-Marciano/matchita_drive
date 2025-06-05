@@ -14,8 +14,8 @@ const RoomsList = ({ rooms, userId }: { rooms: IRoom[]; userId: string })  => {
         `}</style>
         {rooms.map((room) => (
           <RoomCard
-            key={room._id as string}
-            id={room._id as string}
+            key={room._id.toString()}
+            id={room._id.toString()}
             title={room.title}
             avatar={room.avatar}
             documentCount={room.documentIds.length}

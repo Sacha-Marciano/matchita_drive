@@ -1,5 +1,4 @@
-import { DriveFile, IDocument, IRoom } from "@/app/types";
-import { duplicateCheck } from "@/app/utils/DuplicateCheck";
+import { DriveFile, IDocument } from "@/app/types";
 import { extractTextFromGoogleDoc } from "@/app/utils/extractText";
 import axios from "axios";
 import { Session } from "next-auth";
@@ -36,7 +35,7 @@ export const fetchFiles = async (
   }
 };
 
-export const handleExtractText = async (
+export const extractText = async (
   selectedFile: DriveFile | null,
   session: Session
 ) => {
@@ -101,188 +100,39 @@ export const handleExtractText = async (
   }
 };
 
-export const handleTextUpload = async (
-  session: Session | null,
-  selectedFile: DriveFile | null,
-  documents: IDocument[],
-  room: IRoom,
-  onClose: () => void,
-  setActualText: Dispatch<SetStateAction<string | null>>,
-  setDuplicate: Dispatch<SetStateAction<IDocument | null>>,
-  setDocuments: Dispatch<SetStateAction<IDocument[]>>,
-  setActualVector: Dispatch<SetStateAction<number[] | null>>,
-  setStep: Dispatch<
-    SetStateAction<
-      | "extract"
-      | "embed"
-      | "duplicate-check"
-      | "classify"
-      | "duplicate-found"
-      | "error"
-      | null
-    >
-  >
-) => {
-  if (!selectedFile || !session?.accessToken) return;
-
-  const { id, mimeType } = selectedFile;
-  setStep("extract");
-  const extractedText = await handleExtractText(selectedFile, session);
-  if (!extractedText) return;
-
-  setActualText(extractedText);
-
-  try {
-    setStep("embed");
-
-    const embedRes = await fetch(
-      "https://fastapi-gemini-571768511871.us-central1.run.app/embed",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: extractedText }),
-      }
-    );
-
-    const embedData = await embedRes.json();
-    setActualVector(embedData.embeddings);
-
-    setStep("duplicate-check");
-
-    const duplicateFound = await duplicateCheck(
-      documents,
-      embedData.embeddings,
-      selectedFile?.webViewLink || "no url"
-    );
-
-    if (duplicateFound) {
-      setStep("duplicate-found");
-      setDuplicate(duplicateFound);
-      return;
-    }
-
-    setStep("classify");
-
-    const classRes = await fetch(
-      "https://fastapi-gemini-571768511871.us-central1.run.app/classify",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: extractedText,
-          folders: documents.map((doc) => doc.folder),
-          tags: documents.map((doc) => doc.tags).flat(),
-        }),
-      }
-    );
-
-    const classData = await classRes.json();
-
-    const docToSave = {
-      title: classData.title,
-      googleDocsUrl: selectedFile?.webViewLink || "no url",
-      folder: classData.folder,
-      tags: classData.tags,
-      embedding: embedData.embeddings,
-      createdAt: new Date(),
-      baseMimeType: mimeType,
-      googleId: id,
-      teaser: classData.teaser,
-    };
-
-    const saveRes = await fetch("/api/doch", {
+export const embedText = async (text: string) => {
+  const response = await fetch(
+    "https://fastapi-gemini-571768511871.us-central1.run.app/embed",
+    {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ document: docToSave, roomId: room._id }),
-    });
-
-    const saveData = await saveRes.json();
-    setStep(null);
-
-    if (saveRes.status === 201) {
-      onClose();
-      setDocuments([...documents, saveData.data.newDoc]);
-      setActualText(null);
-      setActualVector(null);
+      body: JSON.stringify({ text }),
     }
-  } catch (err) {
-    setStep("error");
-    console.error(err);
-  }
+  );
+  return await response.json(); // should contain { embeddings }
 };
 
-export const handleSaveDuplicate = async (
-  session: Session | null,
-  selectedFile: DriveFile | null,
-  actualText: string | null,
-  actualVector: number[] | null,
-  documents: IDocument[],
-  room: IRoom,
-  onClose: () => void,
-  setDocuments: Dispatch<SetStateAction<IDocument[]>>,
-  setStep: Dispatch<
-    SetStateAction<
-      | "extract"
-      | "embed"
-      | "duplicate-check"
-      | "classify"
-      | "duplicate-found"
-      | "error"
-      | null
-    >
-  >
+export const classifyText = async (
+  text: string,
+  folders: string[],
+  tags: string[]
 ) => {
-  if (!selectedFile || !session?.accessToken) return;
-
-  const { id, mimeType } = selectedFile;
-
-  try {
-    setStep("classify");
-    const classRes = await fetch(
-      "https://fastapi-gemini-571768511871.us-central1.run.app/classify",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: actualText,
-          folders: documents.map((doc) => doc.folder),
-          tags: documents.map((doc) => doc.tags).flat(),
-        }),
-      }
-    );
-
-    const classData = await classRes.json();
-
-    const docToSave = {
-      title: classData.title,
-      googleDocsUrl: selectedFile?.webViewLink || "no url",
-      folder: classData.folder,
-      tags: classData.tags,
-      embedding: actualVector,
-      createdAt: new Date(),
-      baseMimeType: mimeType,
-      googleId: id,
-      teaser: classData.teaser,
-    };
-
-    const saveRes = await fetch("/api/doch", {
+  const response = await fetch(
+    "https://fastapi-gemini-571768511871.us-central1.run.app/classify",
+    {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        document: docToSave,
-        roomId: room._id,
-      }),
-    });
-
-    setStep(null);
-
-    if (saveRes.status === 201) {
-      onClose();
-      setDocuments([...documents, docToSave as IDocument]);
+      body: JSON.stringify({ text, folders, tags }),
     }
-  } catch (err) {
-    setStep("error");
-    console.error(err);
-    return;
-  }
+  );
+  return await response.json(); // should contain { title, folder, tags, teaser }
+};
+
+export const saveDocument = async (doc: Partial<IDocument>, roomId: string) => {
+  const response = await fetch("/api/doch", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ document: doc, roomId }),
+  });
+  return await response.json(); // should contain { data: { newDoc } }
 };

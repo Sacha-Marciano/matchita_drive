@@ -82,7 +82,7 @@ export default function HomePage() {
         </Button>
       </div>
 
-      <RoomsList rooms={rooms} userId={user._id as string} />
+      <RoomsList rooms={rooms} userId={user._id.toString()} />
 
       <AddRoomModal
         isOpen={isModalOpen}
