@@ -1,6 +1,7 @@
 #TODO:
 
 ##IN PROGRESS
+                add "added by " in doc modals,schema types ect. and prevent deletion if not owner
                 missing file tab
 ### BACKLOG
                 Discrepencies check (file format, value format , ect...)
@@ -13,8 +14,8 @@
                 review viewer permissions
                 style viewers modal
                 review profile (add viewers and viewers modal)
-                add "added by " in doc modals,schema types ect. and prevent deletion if not owner
                 navigation menu
+                create context with user rooms and docs and users
                 
 #### final 
                 Deploy on cloud run

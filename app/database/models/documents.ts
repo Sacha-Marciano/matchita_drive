@@ -11,6 +11,7 @@ const DocumentSchema = new Schema<IDocument>(
     baseMimeType: { type: String, required: true },
     googleId: { type: String, required: true },
     teaser: { type: String, required: true },
+    addedBy : {type: Schema.Types.ObjectId, required:true}
   },
   { timestamps: true }
 );

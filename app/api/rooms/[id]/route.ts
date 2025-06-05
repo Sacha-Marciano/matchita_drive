@@ -13,6 +13,7 @@ import {
   updateRoomName,
 } from "@/app/database/services/roomService";
 import connectToDB from "@/app/database/mongodb";
+import { deleteDocument } from "@/app/database/services/documentService";
 
 // GET /api/room/[id] — Get room by ID
 export async function GET(
@@ -152,6 +153,10 @@ export async function DELETE(
       await removeRoomFromUser(viewerId, roomId);
     }
     await removeRoomFromUser(user._id, roomId);
+
+    for (const docId of room.documentIds) {
+      await deleteDocument(docId);
+    }
 
     // Delete the room
     await deleteRoom(roomId);

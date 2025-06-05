@@ -186,6 +186,7 @@ export default function RoomPage() {
         session={session}
         room={room}
         documents={docs}
+        user={user}
         setDocuments={setDocs}
         setShowSignoutMessage={setShowSignoutMessage}
       />

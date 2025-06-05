@@ -14,7 +14,7 @@ import Select from "../../shared/ui/Select";
 import BaseModal from "../../shared/modals/BaseModal";
 
 // ─── Types ───────────────────────────────────────────────────
-import { DriveFile, IRoom, IDocument, IStep } from "@/app/types";
+import { DriveFile, IRoom, IDocument, IStep, IUser } from "@/app/types";
 
 // ─── Utils / Constants ───────────────────────────────────────
 import {
@@ -35,6 +35,7 @@ type AddDocModalProps = {
   session: Session | null;
   room: IRoom;
   documents: IDocument[];
+  user: IUser;
   setDocuments: Dispatch<SetStateAction<IDocument[]>>;
   setShowSignoutMessage: Dispatch<SetStateAction<boolean>>;
 };
@@ -47,6 +48,7 @@ export default function AddDocModal({
   session,
   room,
   documents,
+  user,
   setDocuments,
   setShowSignoutMessage,
 }: AddDocModalProps) {
@@ -120,6 +122,7 @@ export default function AddDocModal({
       baseMimeType: mimeType,
       googleId: id,
       teaser: classifyData.teaser,
+      addedBy: user._id,
     };
     ///////////////////////// STEP 6 - Save new document ///////////////////////////////
     const saveData = await saveDocument(docToSave, room._id.toString());
@@ -157,6 +160,7 @@ export default function AddDocModal({
       baseMimeType: mimeType,
       googleId: id,
       teaser: classifyData.teaser,
+      addedBy: user._id,
     };
     ///////////////////////// STEP 6 - Save new document ///////////////////////////////
     const saveData = await saveDocument(docToSave, room._id.toString());

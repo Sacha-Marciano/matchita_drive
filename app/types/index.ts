@@ -23,6 +23,7 @@ export interface IDocument extends Document {
   baseMimeType: string;
   googleId: string;
   teaser: string;
+  addedBy: Types.ObjectId;
 }
 
 export interface INotification extends Document {

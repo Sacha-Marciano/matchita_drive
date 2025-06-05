@@ -1,7 +1,7 @@
 "use client";
 
 // ─── Framework & Core Imports ─────────────────────────────────
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 
 // ─── UI & Layout ─────────────────────────────────────────────
@@ -10,7 +10,9 @@ import EditableDisplay from "@/app/components/shared/ui/EditableDisplay";
 import OptionsMenu from "@/app/components/shared/ui/OptionMenu";
 
 // ─── Types ───────────────────────────────────────────────────
-import type { IDocument, IRoom } from "@/app/types";
+import { IDocument, IRoom } from "@/app/types";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 // ─── Prop Types ──────────────────────────────────────────────
 interface DocCardProps {
@@ -27,9 +29,37 @@ export default function DocCard({
   setDocList,
   room,
 }: DocCardProps) {
+  // ─── Hooks ────────────────────────────────────────────────
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
   // ─── State ────────────────────────────────────────────────
   const [mode, setMode] = useState<"normal" | "delete" | "teaser">("normal");
   const [isCopied, setIsCopied] = useState(false);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
+
+  // ─── Effects ──────────────────────────────────────────────
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const userRes = await fetch("/api/users");
+        const userData = await userRes.json();
+
+        setIsOwner(userData.data._id === document.addedBy);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchData();
+  }, [session, status]);
 
   // ─── Handlers ─────────────────────────────────────────────
   const handleDocEdit = async (newValue: string) => {
@@ -73,9 +103,7 @@ export default function DocCard({
       const cleanedFolders = room.folders.filter((folder) =>
         remainingFolders.has(folder)
       );
-      const cleanedTags = room.tags.filter((tag) =>
-        remainingTags.has(tag)
-      );
+      const cleanedTags = room.tags.filter((tag) => remainingTags.has(tag));
 
       if (
         cleanedFolders.length !== room.folders.length ||
@@ -122,13 +150,15 @@ export default function DocCard({
                     <Button size="sm" onClick={() => setMode("teaser")}>
                       Teaser
                     </Button>
-                    <Button
-                      variant="delete"
-                      size="sm"
-                      onClick={() => setMode("delete")}
-                    >
-                      Delete
-                    </Button>
+                    {isOwner && (
+                      <Button
+                        variant="delete"
+                        size="sm"
+                        onClick={() => setMode("delete")}
+                      >
+                        Delete
+                      </Button>
+                    )}
                   </div>
                 </OptionsMenu>
               </div>
