@@ -60,15 +60,17 @@ export default function Header() {
 
   // ─── Render ──────────────────────────────────────────────
   return (
-    <div className="relative w-full flex items-center justify-center h-[10vh] bg-transparent">
+    <div className="relative w-full flex items-center justify-center bg-transparent">
       {/* Logo redirect to home */}
-      <Link href={"/"}>
-        <Image
+      <Link href={"/"} className="flex gap-1">
+        {/* <Image
           src={"/brand/logo-transparent.png"}
           alt="paul Logo"
           height={125}
           width={150}
-        />
+        /> */}
+        <h1 className="text-6xl text-paul-text font-bold">Paul</h1> 
+        <span className="text-6xl font-bold text-paul-400">.</span>
       </Link>
 
       {/* Top right controls: notifications and profile */}

@@ -1,7 +1,7 @@
 #TODO:
 
 ##IN PROGRESS
-                Translate answers based on the question (+ translate docs)
+                translate docs
 ### BACKLOG
                 move doc from folder to folder + change folder names
 (                create notification for tabs)                review viewer permissions

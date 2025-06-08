@@ -134,9 +134,7 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
       </div>
 
       {/* ─── Viewer Info Table ────────────────────────────── */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between px-2 text-sm">
+         <div className="flex items-center justify-between px-2 text-sm">
             <p className="font-semibold">Collaborators</p>
             <div
               onClick={handleInviteClick}
@@ -172,14 +170,6 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
               </tbody>
             </table>
           </div>
-        </div>
-
-        {/* ─── Placeholder for Future Features ─────────────── */}
-        <div className="p-4 rounded-xl border border-paul-800 flex items-center justify-center text-muted-foreground">
-          Coming soon: User activity / Invite system
-        </div>
-      </div>
-
       {/* ─── Invite Modal ─────────────────────────────────── */}
       <InviteUserModal isOpen={isModalOpen} onClose={handleCloseModal} room={room} />
     </motion.div>
