@@ -1,19 +1,18 @@
 "use client";
 
-// ─── Framework & Core Imports ─────────────────────────────────
-import { IRoom } from "@/app/types";
+// ─── Custom Hooks ─────────────────────────────────
+import { useUser } from "@/app/contexts/UserContext";
+import { useRooms } from "@/app/contexts/RoomsContext";
 
 // ─── Components ──────────────────────────────────────────────
 import RoomCard from "./RoomCard";
 
-// ─── Prop Types ──────────────────────────────────────────────
-type Props = {
-  rooms: IRoom[];
-  userId: string;
-};
-
 // ─── Component ───────────────────────────────────────────────
-export default function RoomsList({ rooms, userId }: Props) {
+export default function RoomsList() {
+  // ─── Hooks ───────────────────────────────────────────────
+  const { user } = useUser();
+  const { rooms } = useRooms();
+
   // ─── Render ───────────────────────────────────────────────
   return (
     <div
@@ -30,16 +29,9 @@ export default function RoomsList({ rooms, userId }: Props) {
       {/* Render a RoomCard for each room */}
       {rooms.map((room) => (
         <RoomCard
-          key={room._id.toString()}
-          id={room._id.toString()}
-          title={room.title}
-          avatar={room.avatar}
-          documentCount={room.documentIds.length}
-          folders={room.folders}
-          tags={room.tags}
-          viewerCount={room.viewerIds.length}
-          createdAt={room.createdAt}
-          isOwner={room.ownerId.toString() === userId}
+          key={room.title}
+          room={room}
+          isOwner={room.ownerId.toString() === user?._id.toString()}
         />
       ))}
     </div>

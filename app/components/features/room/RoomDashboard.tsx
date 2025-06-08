@@ -171,7 +171,7 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
             </table>
           </div>
       {/* ─── Invite Modal ─────────────────────────────────── */}
-      <InviteUserModal isOpen={isModalOpen} onClose={handleCloseModal} room={room} />
+      <InviteUserModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </motion.div>
   );
 }

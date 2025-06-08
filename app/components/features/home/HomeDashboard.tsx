@@ -1,20 +1,20 @@
 "use client";
 
-// ─── Types ────────────────────────────────────────────────────
-import type { IRoom } from "@/app/types";
+// ─── Custom Hooks ───────────────────────────────────────────────
+import { useUser } from "@/app/contexts/UserContext";
+import { useRooms } from "@/app/contexts/RoomsContext";
 
 // ─── Components ───────────────────────────────────────────────
 import StatsCard from "../../shared/ui/StatsCard";
 
-// ─── Props ────────────────────────────────────────────────────
-type Props = {
-  userName: string;
-  rooms: IRoom[];
-};
-
 // ─── Component ────────────────────────────────────────────────
-export default function HomeDashboard({ userName, rooms }: Props) {
+export default function HomeDashboard() {
+  // ─── Hooks ──────────────────────────────────────────
+  const { user } = useUser();
+  const { rooms } = useRooms();
+
   // ─── Derived Data ──────────────────────────────────────────
+  const userName = user?.name;
   const totalDocuments = rooms.reduce(
     (acc, room) => acc + room.documentIds.length,
     0

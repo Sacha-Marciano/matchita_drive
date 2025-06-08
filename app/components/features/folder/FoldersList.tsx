@@ -20,7 +20,7 @@ export default function FoldersList({ folders }: Props) {
           <FolderCard
             key={folderName}
             folderName={folderName}
-            documents={documents}
+            folderDocs={documents}
           />
         ))}
     </div>

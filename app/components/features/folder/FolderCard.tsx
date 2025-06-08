@@ -15,26 +15,26 @@ import EditableDisplay from "../../shared/ui/EditableDisplay";
 // ─── Props ────────────────────────────────────────────────────
 type Props = {
   folderName: string;
-  documents: IDocument[];
+  folderDocs: IDocument[];
 };
 
 // ─── Component ────────────────────────────────────────────────
-export default function FolderCard({ folderName, documents }: Props) {
+export default function FolderCard({ folderName, folderDocs }: Props) {
   // ─── State ─────────────────────────────────────────────────
   const [isOpen, setIsOpen] = useState(false);
 
   // ─── Derived Data ──────────────────────────────────────────
-  const allTags = documents.flatMap((doc) => doc.title);
+  const allTags = folderDocs.flatMap((doc) => doc.title);
   const docTitles = [...new Set(allTags)].slice(0, 4);
   const extraTags = allTags.length - docTitles.length;
   const [title, setTitle] = useState<string>(folderName);
-  const newestDoc = documents.reduce((latest, doc) =>
+  const newestDoc = folderDocs.reduce((latest, doc) =>
     new Date(doc.createdAt) > new Date(latest.createdAt) ? doc : latest
   );
 
   // ─── Handlers ──────────────────────────────────────────
   const handleEditFolder = async (newValue: string) => {
-    for (const doc of documents) {
+    for (const doc of folderDocs) {
       const res = await fetch(`/api/doch/${doc._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -58,7 +58,7 @@ export default function FolderCard({ folderName, documents }: Props) {
           variant="secondary"
         />
         <span className="text-sm text-paul-400">
-          {documents.length} document{documents.length > 1 ? "s" : ""}
+          {folderDocs.length} document{folderDocs.length > 1 ? "s" : ""}
         </span>
       </div>
 
@@ -100,7 +100,7 @@ export default function FolderCard({ folderName, documents }: Props) {
       {/* Expandable Document List */}
       {isOpen && (
         <div className="bg-bg w-full p-4 flex flex-col gap-2 rounded-2xl">
-          {documents.map((doc, index) => (
+          {folderDocs.map((doc, index) => (
             <div
               key={index}
               className="bg-bg-alt rounded-2xl p-2 w-full flex items-center justify-between"

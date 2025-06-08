@@ -1,42 +1,33 @@
 "use client";
 
 // ─── Framework & Core Imports ─────────────────────────────────
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-// ─── Auth / Session ──────────────────────────────────────────
+// ─── Custom Hooks ───────────────────────────────────────────────────
+import { useRooms } from "@/app/contexts/RoomsContext";
 
 // ─── Components ──────────────────────────────────────────────
-import Button from "../../shared/ui/Button";
 import BaseModal from "../../shared/modals/BaseModal";
 
 // ─── UI & Layout ─────────────────────────────────────────────
-
-// ─── Types ───────────────────────────────────────────────────
-import { IRoom } from "@/app/types";
-
-// ─── Utils / Services / Constants ────────────────────────────
+import Button from "../../shared/ui/Button";
 
 // ─── Prop Types ──────────────────────────────────────────────
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  setRooms: Dispatch<SetStateAction<IRoom[]>>;
-  rooms: IRoom[];
 };
 
 // ─── Component ───────────────────────────────────────────────
-export default function AddRoomModal({
-  isOpen,
-  onClose,
-  setRooms,
-  rooms,
-}: Props) {
-
+export default function AddRoomModal({ isOpen, onClose }: Props) {
   // ─── Hooks ────────────────────────────────────────────────
+  const router = useRouter();
+  const { rooms, setRooms } = useRooms();
+
+  // ─── State ────────────────────────────────────────────────
   const [title, setTitle] = useState("");
   const [avatar, setAvatar] = useState("");
-  const router = useRouter();
 
   // ─── Handlers ─────────────────────────────────────────────
   const handleSubmit = async () => {

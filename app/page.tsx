@@ -74,7 +74,7 @@ export default function HomePage() {
   // ─── Render ───────────────────────────────────────────────
   return (
     <div className="p-4">
-      <HomeDashboard userName={session?.user?.name || "User"} rooms={rooms} />
+      <HomeDashboard />
 
       <div className="mb-6 flex justify-end">
         <Button onClick={() => setIsModalOpen(true)} variant="secondary">
@@ -82,13 +82,11 @@ export default function HomePage() {
         </Button>
       </div>
 
-      <RoomsList rooms={rooms} userId={user._id.toString()} />
+      <RoomsList  />
 
       <AddRoomModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        setRooms={setRooms}
-        rooms={rooms}
       />
     </div>
   );

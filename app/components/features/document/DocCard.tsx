@@ -1,47 +1,45 @@
 "use client";
 
 // ─── Framework & Core Imports ─────────────────────────────────
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "next/navigation";
+
+// ─── Custom Hooks ─────────────────────────────────────────────
+import { useUser } from "@/app/contexts/UserContext";
+import { useRoom } from "@/app/contexts/RoomContext";
+import { useDocuments } from "@/app/contexts/DocumentsContext";
+import { useSession } from "next-auth/react";
 
 // ─── UI & Layout ─────────────────────────────────────────────
 import Button from "@/app/components/shared/ui/Button";
 import EditableDisplay from "@/app/components/shared/ui/EditableDisplay";
 import OptionsMenu from "@/app/components/shared/ui/OptionMenu";
+import Select from "../../shared/ui/Select";
 
 // ─── Types ───────────────────────────────────────────────────
-import { IDocument, IRoom } from "@/app/types";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Select from "../../shared/ui/Select";
+import { IDocument } from "@/app/types";
 
 // ─── Prop Types ──────────────────────────────────────────────
 interface DocCardProps {
   document: IDocument;
-  docList?: IDocument[];
-  setDocList?: Dispatch<SetStateAction<IDocument[]>>;
-  room?: IRoom;
   folders?: Record<string, IDocument[]>;
 }
 
 // ─── Component ───────────────────────────────────────────────
-export default function DocCard({
-  document,
-  docList,
-  setDocList,
-  room,
-  folders,
-}: DocCardProps) {
+export default function DocCard({ document, folders }: DocCardProps) {
   // ─── Hooks ────────────────────────────────────────────────
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { room } = useRoom();
+  const { documents, setDocuments } = useDocuments();
+  const { user } = useUser();
 
   // ─── State ────────────────────────────────────────────────
   const [mode, setMode] = useState<"normal" | "delete" | "teaser" | "move">(
     "normal"
   );
   const [isCopied, setIsCopied] = useState(false);
-  const [isOwner, setIsOwner] = useState<boolean>(false);
   const [moveToFolder, setMoveToFolder] = useState<string | null>("");
 
   // ─── Derived Data ──────────────────────────────────────────────
@@ -49,6 +47,9 @@ export default function DocCard({
     name: key,
     value: key,
   }));
+
+  // ─── Derived Data ──────────────────────────────────────────────
+  const isOwner = document.addedBy === user?._id;
 
   // ─── Effects ──────────────────────────────────────────────
   useEffect(() => {
@@ -58,24 +59,11 @@ export default function DocCard({
       router.push("/login");
       return;
     }
-
-    const fetchData = async () => {
-      try {
-        const userRes = await fetch("/api/users");
-        const userData = await userRes.json();
-
-        setIsOwner(userData.data._id === document.addedBy);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      }
-    };
-
-    fetchData();
   }, [session, status]);
 
   // ─── Handlers ─────────────────────────────────────────────
   const handleDocEdit = async (newValue: string) => {
-    if (!docList || !setDocList) return;
+    if (!documents || !setDocuments) return;
 
     const res = await fetch(`/api/doch/${document._id}`, {
       method: "PUT",
@@ -84,12 +72,12 @@ export default function DocCard({
     });
 
     const editData = await res.json();
-    const updatedList = docList.filter((doc) => doc._id !== editData.data._id);
-    setDocList([editData.data, ...updatedList]);
+    const updatedList = documents.filter((doc) => doc._id !== editData.data._id);
+    setDocuments([editData.data, ...updatedList]);
   };
 
   const handleDocDelete = async () => {
-    if (!room || !docList || !setDocList) return;
+    if (!room || !documents || !setDocuments) return;
 
     try {
       const res = await fetch(`/api/doch/${document._id}?roomId=${room._id}`, {
@@ -103,8 +91,8 @@ export default function DocCard({
       }
 
       const deletedDoc = (await res.json()).data;
-      const filteredList = docList.filter((doc) => doc._id !== deletedDoc._id);
-      setDocList(filteredList);
+      const filteredList = documents.filter((doc) => doc._id !== deletedDoc._id);
+      setDocuments(filteredList);
       setMode("normal");
 
       const remainingFolders = new Set(filteredList.map((doc) => doc.folder));
@@ -143,7 +131,7 @@ export default function DocCard({
   };
 
   const handleMoveFolder = async () => {
-    if (moveToFolder === "" || !docList || !setDocList) return;
+    if (moveToFolder === "" || !documents || !setDocuments) return;
 
     const moveRes = await fetch(`/api/doch/${document._id}`, {
       method: "PUT",
@@ -153,8 +141,8 @@ export default function DocCard({
 
     const moveData = await moveRes.json();
 
-    const updatedList = docList.filter((doc) => doc._id !== moveData.data._id);
-    setDocList([moveData.data, ...updatedList]);
+    const updatedList = documents.filter((doc) => doc._id !== moveData.data._id);
+    setDocuments([moveData.data, ...updatedList]);
     setMode("normal");
   };
 
@@ -171,7 +159,7 @@ export default function DocCard({
               variant="secondary"
               size="full"
             />
-            {docList && (
+            {documents && (
               <div className="absolute right-1 top-1">
                 <OptionsMenu>
                   <div className="flex flex-col items-center justify-center gap-1">
@@ -269,7 +257,7 @@ export default function DocCard({
       {mode === "move" && (
         <div className="h-full relative z-50">
           <Select
-          label="Move Doc to folder :"
+            label="Move Doc to folder :"
             value={moveToFolder}
             options={folderOptions}
             onChange={(newValue: string | null) => setMoveToFolder(newValue)}

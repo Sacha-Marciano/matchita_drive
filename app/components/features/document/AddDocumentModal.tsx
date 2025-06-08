@@ -3,15 +3,17 @@
 // ─── Framework Imports ───────────────────────────────────────
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 
-// ─── Auth ────────────────────────────────────────────────────
-import { Session } from "next-auth";
-
-// ─── Components ──────────────────────────────────────────────
+// ─── Custom Hooks ─────────────────────────────────────────────
+import { useUser } from "@/app/contexts/UserContext";
+import { useRoom } from "@/app/contexts/RoomContext";
+import { useDocuments } from "@/app/contexts/DocumentsContext";
+import { useSession } from "next-auth/react";
 
 // ─── UI & Layout ─────────────────────────────────────────────
 import Button from "../../shared/ui/Button";
 import Select from "../../shared/ui/Select";
 import BaseModal from "../../shared/modals/BaseModal";
+import Steps from "../../shared/ui/Steps";
 
 // ─── Types ───────────────────────────────────────────────────
 import { DriveFile, IDocument, IStep } from "@/app/types";
@@ -22,20 +24,14 @@ import {
   embedText,
   fetchFiles,
   extractText,
-  // handleSaveDuplicate,
   saveDocument,
 } from "./DocumentMethods";
 import { duplicateCheck } from "@/app/utils/DuplicateCheck";
-import Steps from "../../shared/ui/Steps";
-import { useUser } from "@/app/contexts/UserContext";
-import { useRoom } from "@/app/contexts/RoomContext";
-import { useDocuments } from "@/app/contexts/DocumentsContext";
 
 // ─── Prop Types ───────────────────────────────────────────────────
 type AddDocModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  session: Session | null;
   setShowSignoutMessage: Dispatch<SetStateAction<boolean>>;
 };
 
@@ -44,14 +40,13 @@ type AddDocModalProps = {
 export default function AddDocModal({
   isOpen,
   onClose,
-  session,
   setShowSignoutMessage,
 }: AddDocModalProps) {
   // ─── Hooks ────────────────────────────────────────────────
   const { user } = useUser();
   const { room } = useRoom();
   const { documents, setDocuments } = useDocuments();
-
+  const { data: session } = useSession();
   // ─── State ────────────────────────────────────────────────
   const [files, setFiles] = useState<DriveFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null);

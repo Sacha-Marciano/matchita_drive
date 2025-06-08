@@ -28,7 +28,6 @@ import { useUser } from "@/app/contexts/UserContext";
 import { useDocuments } from "@/app/contexts/DocumentsContext";
 import { useRoom } from "@/app/contexts/RoomContext";
 
-
 // ─────────────────────────────────────────────────────────────
 
 export default function RoomPage() {
@@ -38,13 +37,12 @@ export default function RoomPage() {
   const { data: session, status } = useSession();
   const { user, setUser } = useUser();
   const { documents, setDocuments } = useDocuments();
-  const {room, setRoom} = useRoom();
+  const { room, setRoom } = useRoom();
 
   // ─── State ────────────────────────────────────────────────
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folders, setFolders] = useState<Record<string, IDocument[]>>({});
-  const [accessToken, setAccessToken] = useState("");
   const [showSignoutMessage, setShowSignoutMessage] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
 
@@ -56,8 +54,6 @@ export default function RoomPage() {
       router.push("/login");
       return;
     }
-
-    if (session.accessToken) setAccessToken(session.accessToken);
 
     const fetchData = async () => {
       try {
@@ -146,29 +142,15 @@ export default function RoomPage() {
     },
     {
       label: "Docs",
-      content: (
-        <DocsList
-          docs={documents}
-          setDocList={setDocuments}
-          room={room}
-          folders={folders}
-        />
-      ),
+      content: <DocsList folders={folders} />,
     },
     {
       label: "Chat",
-      content: (
-        <ChatWindow
-          roomId={id}
-          accessToken={accessToken}
-          messages={messages}
-          setMessages={setMessages}
-        />
-      ),
+      content: <ChatWindow messages={messages} setMessages={setMessages} />,
     },
     {
       label: "Settings",
-      content: <RoomSettings room={room} />,
+      content: <RoomSettings />,
     },
   ];
 
@@ -198,7 +180,6 @@ export default function RoomPage() {
       <AddDocModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        session={session}
         setShowSignoutMessage={setShowSignoutMessage}
       />
 

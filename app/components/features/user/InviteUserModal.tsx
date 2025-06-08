@@ -10,19 +10,20 @@ import Button from "../../shared/ui/Button";
 import BaseModal from "../../shared/modals/BaseModal";
 
 // ─── Types ───────────────────────────────────────────────────
-import { IUser, IRoom } from "@/app/types";
+import { IUser } from "@/app/types";
+import { useRoom } from "@/app/contexts/RoomContext";
 
 // ─── Prop Types ──────────────────────────────────────────────
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  room: IRoom;
 };
 
 // ─── Component ───────────────────────────────────────────────
-export default function InviteUserModal({ isOpen, onClose, room }: Props) {
-  // ─── Session ──────────────────────────────────────────────
+export default function InviteUserModal({ isOpen, onClose }: Props) {
+  // ─── Hooks ──────────────────────────────────────────────
   const { data: session } = useSession();
+  const { room } = useRoom();
 
   // ─── State ────────────────────────────────────────────────
   const [userEmail, setUserEmail] = useState<string>("");
@@ -58,8 +59,8 @@ export default function InviteUserModal({ isOpen, onClose, room }: Props) {
         userId: foundUser._id,
         payload: {
           type: "invitation",
-          message: `You have been invited by ${session?.user?.email} to view room "${room.title}"`,
-          metadata: { type: "roomId", payload: room._id },
+          message: `You have been invited by ${session?.user?.email} to view room "${room?.title}"`,
+          metadata: { type: "roomId", payload: room?._id },
         },
       }),
     });

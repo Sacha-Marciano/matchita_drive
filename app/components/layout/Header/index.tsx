@@ -12,14 +12,8 @@ import { useSession } from "next-auth/react";
 // ─── Components ─────────────────────────────────────────────
 import NotificationBell from "../NotificationBell";
 
-// ─── UI & Layout ────────────────────────────────────────────
-
 // ─── Types ──────────────────────────────────────────────────
 import { IUser } from "@/app/types";
-
-// ─── Utils / Services / Constants ───────────────────────────
-
-// ─── Prop Types ─────────────────────────────────────────────
 
 // ─── Component ──────────────────────────────────────────────
 export default function Header() {

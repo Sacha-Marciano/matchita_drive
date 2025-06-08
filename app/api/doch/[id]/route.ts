@@ -23,7 +23,7 @@ export async function GET(
   await connectToDB();
 
   const { params } = context;
-  const { id } = await params;
+  const { id } = await params; // room id
 
   if (!Types.ObjectId.isValid(id)) {
     return NextResponse.json({ error: "Invalid room ID" }, { status: 400 });

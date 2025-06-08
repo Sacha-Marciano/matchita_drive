@@ -4,45 +4,52 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { IRoom } from "@/app/types";
 
 // ─── Prop Types ──────────────────────────────────────────────
 type RoomCardProps = {
-  id: string;
-  title: string;
-  avatar: string;
-  documentCount: number;
-  folders: string[];
-  tags: string[];
-  viewerCount: number;
-  createdAt: Date;
+  // id: string;
+  // title: string;
+  // avatar: string;
+  // documentCount: number;
+  // folders: string[];
+  // tags: string[];
+  // viewerCount: number;
+  // createdAt: Date;
   isOwner: boolean;
+  room: IRoom;
 };
 // ─── Component ───────────────────────────────────────────────
-export default function RoomCard({
-  id,
-  title,
-  avatar,
-  documentCount,
-  folders,
-  tags,
-  viewerCount,
-  createdAt,
-  isOwner,
-}: RoomCardProps) {
-  // ─── Render ───────────────────────────────────────────────
-  const displayTags = tags.slice(0, 2);
-  const extraTagCount = tags.length - displayTags.length;
+// export default function RoomCard({
+//   id,
+//   title,
+//   avatar,
+//   documentCount,
+//   folders,
+//   tags,
+//   viewerCount,
+//   createdAt,
+//   isOwner,
+// }: RoomCardProps) {
+export default function RoomCard({ room, isOwner }: RoomCardProps) {
+  // ─── Derived data ───────────────────────────────────────────────
+  const documentCount = room.documentIds.length;
+  const viewerCount = room.viewerIds.length + 1;
 
-  const displayFolders = folders.slice(0, 2);
-  const extraFolderCount = folders.length - displayFolders.length;
+  // ─── Render ───────────────────────────────────────────────
+  const displayTags = room.tags.slice(0, 2);
+  const extraTagCount = room.tags.length - displayTags.length;
+
+  const displayFolders = room.folders.slice(0, 2);
+  const extraFolderCount = room.folders.length - displayFolders.length;
 
   return (
-    <Link href={`/room/${id}`} className="hover:scale-105">
+    <Link href={`/room/${room._id}`} className="hover:scale-105">
       <div className="border flex flex-col justify-between gap-4 p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt cursor-pointer space-y-4 text-paul-text-alt">
         {/* ── Header: Avatar + Title + Owner Badge ───────────────────── */}
         <div className="flex items-center gap-4">
           <Image
-            src={avatar}
+            src={room.avatar}
             alt="Room Avatar"
             width={56}
             height={56}
@@ -50,7 +57,7 @@ export default function RoomCard({
           />
           <div className="flex flex-col w-[78%]">
             <p className="text-2xl font-semibold text-paul-text-alt text-nowrap overflow-hidden overflow-ellipsis">
-              {title}
+              {room.title}
             </p>
             {isOwner && (
               <span className="text-xs text-paul-200 bg-border-alt px-2 pb-0.5 rounded-md w-fit">
@@ -63,16 +70,16 @@ export default function RoomCard({
         {/* ── Stats: Document, Folder, Tag, Viewer, Date ───────────── */}
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-paul-500">
           <span>🗂️ {documentCount} document(s)</span>
-          <span>📁 {folders.length} folder(s)</span>
-          <span>🏷️ {tags.length} tag(s)</span>
+          <span>📁 {room.folders.length} folder(s)</span>
+          <span>🏷️ {room.tags.length} tag(s)</span>
           <span>👥 {viewerCount + 1} participant(s)</span>
-          <span>🕒 Created {formatDistanceToNow(new Date(createdAt))} ago</span>
+          <span>🕒 Created {formatDistanceToNow(new Date(room.createdAt))} ago</span>
         </div>
 
         {/* ── Previews: Tags & Folders ───────────────────────────── */}
         <div className="space-y-4">
           {/* Tag Preview */}
-          {tags.length > 0 ? (
+          {room.tags.length > 0 ? (
             <div className="flex flex-wrap items-center gap-2 text-xs">
               {displayTags.map((tag) => (
                 <span
@@ -95,7 +102,7 @@ export default function RoomCard({
           )}
 
           {/* Folder Preview */}
-          {folders.length > 0 ? (
+          {room.folders.length > 0 ? (
             <div className="flex flex-wrap items-center gap-2 text-xs">
               {displayFolders.map((folder) => (
                 <span
@@ -106,9 +113,7 @@ export default function RoomCard({
                 </span>
               ))}
               {extraFolderCount > 0 && (
-                <span className="text-paul-400">
-                  +{extraFolderCount} more
-                </span>
+                <span className="text-paul-400">+{extraFolderCount} more</span>
               )}
             </div>
           ) : (

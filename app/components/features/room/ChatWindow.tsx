@@ -1,41 +1,46 @@
 "use client";
 
 // ─── Framework & Core Imports ─────────────────────────────────
-import React, { useState, useRef, useEffect, Dispatch, SetStateAction } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import { useSession } from "next-auth/react";
+
+// ─── Custom Hooks ───────────────────────────────────────────────────
+import { useRoom } from "@/app/contexts/RoomContext";
+
+// ─── Types ───────────────────────────────────────────────────
+import { IMessage } from "@/app/types";
 
 // ─── Icons ───────────────────────────────────────────────────
 import { SendHorizonal } from "lucide-react";
 
-// ─── Types ───────────────────────────────────────────────────
-import { ParamValue } from "next/dist/server/request/params";
-import { IMessage } from "@/app/types";
-
 // ─── Props Types ───────────────────────────────────────────────────
 type ChatWindowProps = {
-  roomId: ParamValue;
-  accessToken: string | null;
   messages: IMessage[];
   setMessages: Dispatch<SetStateAction<IMessage[]>>;
 };
 
 // ─── Component ───────────────────────────────────────────────
-const ChatWindow: React.FC<ChatWindowProps> = ({
-  roomId,
-  accessToken,
-  messages,
-  setMessages
-}) => {
+export default function ChatWindow({ messages, setMessages }: ChatWindowProps) {
+  // ─── Hooks ────────────────────────────────────────────────
+  const { data: session } = useSession();
+  const { room } = useRoom();
+
   // ─── State ────────────────────────────────────────────────
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [messages, setMessages] = useState<IMessage[]>([]);
 
   // ─── Refs ─────────────────────────────────────────────────
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // ─── Handlers ─────────────────────────────────────────────
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !room || !session?.accessToken) return;
 
     const userMessage = {
       role: "user" as const,
@@ -52,8 +57,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: userMessage.content,
-          roomId,
-          accessToken,
+          roomId: room._id,
+          accessToken: session.accessToken,
         }),
       });
 
@@ -183,6 +188,4 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       </div>
     </div>
   );
-};
-
-export default ChatWindow;
+}

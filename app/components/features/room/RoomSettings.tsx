@@ -11,17 +11,13 @@ import Button from "../../shared/ui/Button";
 import { Dialog } from "@headlessui/react";
 
 // ─── Types ───────────────────────────────────────────────────
-import { IRoom } from "@/app/types";
-
-// ─── Prop Types ──────────────────────────────────────────────
-type Props = {
-  room: IRoom;
-};
+import { useRoom } from "@/app/contexts/RoomContext";
 
 // ─── Component ───────────────────────────────────────────────
-export default function RoomSettings({ room }: Props) {
+export default function RoomSettings() {
   // ─── Hooks ────────────────────────────────────────────────
   const router = useRouter();
+  const { room } = useRoom();
 
   // ─── State ────────────────────────────────────────────────
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -29,6 +25,7 @@ export default function RoomSettings({ room }: Props) {
 
   // ─── Handlers ─────────────────────────────────────────────
   const handleDeleteRoom = async () => {
+    if (!room) return;
     try {
       const deleteRes = await fetch(`/api/rooms/${room._id}`, {
         method: "DELETE",
@@ -48,7 +45,7 @@ export default function RoomSettings({ room }: Props) {
       <div className="bg-bg-alt w-full rounded-xl p-4">
         <div className="flex items-center justify-between">
           <p className="font-bold text-paul-text-alt">Room&apos;s Name</p>
-          <p className="font-semibold text-paul-text-alt">{room.title}</p>
+          <p className="font-semibold text-paul-text-alt">{room?.title}</p>
         </div>
       </div>
 
@@ -79,8 +76,8 @@ export default function RoomSettings({ room }: Props) {
             {/* Input Confirmation */}
             <div className="flex flex-col gap-2 w-full">
               <p>
-                Type the room&apos;s name &quot;<strong>{room.title}</strong>&quot; to
-                delete it
+                Type the room&apos;s name &quot;<strong>{room?.title}</strong>
+                &quot; to delete it
               </p>
               <input
                 type="text"
@@ -96,9 +93,9 @@ export default function RoomSettings({ room }: Props) {
                 Cancel
               </Button>
               <Button
-                variant={input !== room.title ? "delete-disable" : "delete"}
+                variant={input !== room?.title ? "delete-disable" : "delete"}
                 onClick={handleDeleteRoom}
-                disabled={input !== room.title}
+                disabled={input !== room?.title}
               >
                 Delete room
               </Button>

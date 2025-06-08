@@ -1,18 +1,17 @@
 #TODO:
 
 ##IN PROGRESS
-                create context with rooms and docs and users
-                language context + translate docs (gemini route)
+                 translate docs (lang context + gemini route)
 
 ### BACKLOG
-                
-               review viewer permissions
-                style viewers modal
                 review profile (add viewers and viewers modal)
+                review viewer permissions
+                style viewers modal
                 Add description of the chat when no messages.
+                Include animations for chat thinking (divide chat route)
+
 #### final 
-                Deploy on cloud run
-                Include animations for chat thinking
                 Rework all animations
                 rework prompts
+                Deploy on cloud run
                 refactor component with 100+ lines, pages with 200+ lines
