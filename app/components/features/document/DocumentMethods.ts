@@ -120,6 +120,7 @@ export const embedText = async (text: string) => {
 };
 
 export const classifyText = async (
+  title: string,
   text: string,
   folders: string[],
   tags: string[]
@@ -129,7 +130,7 @@ export const classifyText = async (
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, folders, tags }),
+      body: JSON.stringify({title, text, folders, tags }),
     }
   );
   return await response.json(); // should contain { title, folder, tags, teaser }

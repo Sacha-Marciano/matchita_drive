@@ -27,7 +27,7 @@ export default function HomeDashboard({ userName, rooms }: Props) {
   return (
     <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 mb-6">
       {/* Welcome Header */}
-      <div className="col-span-full bg-bg-alt p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center text-matchita-text-alt">
+      <div className="col-span-full bg-bg-alt p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center text-paul-text-alt">
         <h1 className="text-2xl font-bold">Welcome, {userName}</h1>
         <span className="text-sm text-gray-400">Dashboard Overview</span>
       </div>

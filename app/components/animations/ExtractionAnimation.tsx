@@ -26,13 +26,13 @@ export default function ExtractionAnimation() {
   return (
     <div className="relative w-40 h-40 flex items-center justify-center">
       {/* Central document box */}
-      <div className="w-16 h-20 bg-matchita-500 rounded-sm shadow-md z-0" />
+      <div className="w-16 h-20 bg-paul-500 rounded-sm shadow-md z-0" />
 
       {/* Text lines animating out */}
       {[...Array(4)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-10 h-1 rounded-sm bg-matchita-300 z-10"
+          className="absolute w-10 h-1 rounded-sm bg-paul-300 z-10"
           style={{
             bottom: "50%",
             left: "50%",

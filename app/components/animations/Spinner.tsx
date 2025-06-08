@@ -13,8 +13,8 @@ const sizeMap = {
 };
 
 const variantMap = {
-  primary: "border-matchita-200 border-t-transparent",
-  secondary: "border-matchita-800 border-t-transparent",
+  primary: "border-paul-200 border-t-transparent",
+  secondary: "border-paul-800 border-t-transparent",
 };
 
 export default function Spinner({

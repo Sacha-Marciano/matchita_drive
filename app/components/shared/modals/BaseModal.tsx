@@ -24,7 +24,7 @@ export default function BaseModal({
 
         {/* Modal content */}
         <DialogPanel
-          className={`relative z-50 w-full max-w-md rounded-xl bg-white p-6 shadow-xl text-matchita-text-alt ${className}`}
+          className={`relative z-50 w-full max-w-md rounded-xl bg-white p-6 shadow-xl text-paul-text-alt ${className}`}
         >
           {children}
         </DialogPanel>

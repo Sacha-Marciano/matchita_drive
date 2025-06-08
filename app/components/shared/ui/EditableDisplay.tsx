@@ -84,17 +84,17 @@ const EditableDisplay = ({
 
   const variantText =
     variant === "secondary"
-      ? "text-matchita-text-alt"
+      ? "text-paul-text-alt"
       : variant === "disabled"
-      ? "text-matchita-text-disabled"
-      : "text-matchita-text";
+      ? "text-paul-text-disabled"
+      : "text-paul-text";
 
   const inputStyle =
     variant === "secondary"
-      ? "bg-bg-alt text-matchita-text-alt"
+      ? "bg-bg-alt text-paul-text-alt"
       : variant === "disabled"
-      ? "bg-bg-disabled text-matchita-text-disabled"
-      : "bg-bg text-matchita-text";
+      ? "bg-bg-disabled text-paul-text-disabled"
+      : "bg-bg text-paul-text";
 
   return (
     <div className="mr-4" ref={wrapperRef}>
@@ -131,7 +131,7 @@ const EditableDisplay = ({
             onChange={(e) => setValue(e.target.value)}
             disabled={variant === "disabled"}
             className={cn(
-              "overflow-hidden overflow-ellipsis px-1 rounded-lg border border-matchita-800",
+              "overflow-hidden overflow-ellipsis px-1 rounded-lg border border-paul-800",
               sizeClass,
               inputClass,
               inputStyle

@@ -18,7 +18,7 @@ import RoomDashboard from "@/app/components/features/room/RoomDashboard";
 import Tabs from "@/app/components/shared/ui/Tabs";
 
 // ─── Types ───────────────────────────────────────────────────
-import { IRoom } from "@/app/types";
+import { IMessage, IRoom } from "@/app/types";
 import { IUser } from "@/app/types";
 import { IDocument } from "@/app/types";
 import FoldersList from "@/app/components/features/folder/FoldersList";
@@ -46,6 +46,7 @@ export default function RoomPage() {
   );
   const [accessToken, setAccessToken] = useState("");
   const [showSignoutMessage, setShowSignoutMessage] = useState(false);
+  const [messages, setMessages] = useState<IMessage[]>([]);
 
   // ─── Effects ──────────────────────────────────────────────
   useEffect(() => {
@@ -149,7 +150,14 @@ export default function RoomPage() {
     },
     {
       label: "Chat",
-      content: <ChatWindow roomId={id} accessToken={accessToken} />,
+      content: (
+        <ChatWindow
+          roomId={id}
+          accessToken={accessToken}
+          messages={messages}
+          setMessages={setMessages}
+        />
+      ),
     },
     {
       label: "Settings",

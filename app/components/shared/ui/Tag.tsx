@@ -17,10 +17,10 @@ const sizeStyles = {
 };
 
 const variantStyles = {
-  primary: " bg-bg text-matchita-text border-border ",
-  secondary: " bg-bg-alt text-matchita-text-alt border-border-alt ",
+  primary: " bg-bg text-paul-text border-border ",
+  secondary: " bg-bg-alt text-paul-text-alt border-border-alt ",
   disabled:
-    " bg-bg-disabled text-matchita-text-disabled border-border-disabled ",
+    " bg-bg-disabled text-paul-text-disabled border-border-disabled ",
 };
 
 export default function Tag({

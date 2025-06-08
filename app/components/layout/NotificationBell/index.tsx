@@ -65,7 +65,7 @@ export default function NotificationBell({
       {/* ── Notification Icon ── */}
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-full hover:bg-gray-100 hover:text-matchita-text-alt transition cursor-pointer"
+        className="relative p-2 rounded-full hover:bg-gray-100 hover:text-paul-text-alt transition cursor-pointer"
         aria-label="Notifications"
       >
         <Bell className="h-6 w-6" />
@@ -76,7 +76,7 @@ export default function NotificationBell({
 
       {/* ── Dropdown Panel ── */}
       {open && (
-        <div className="absolute right-0 mt-2 w-80 max-h-96 bg-bg-alt text-matchita-text-alt border-2 rounded-xl shadow-lg z-50 border-white">
+        <div className="absolute right-0 mt-2 w-80 max-h-96 bg-bg-alt text-paul-text-alt border-2 rounded-xl shadow-lg z-50 border-white">
           <div className="p-3 font-semibold border-b">Notifications</div>
 
           <div
@@ -91,7 +91,7 @@ export default function NotificationBell({
 
             {/* ── Notification Content ── */}
             {notificationList.length === 0 ? (
-              <div className="p-4 text-sm text-matchita-500">
+              <div className="p-4 text-sm text-paul-500">
                 No notifications yet.
               </div>
             ) : (
@@ -113,12 +113,12 @@ export default function NotificationBell({
                         key={notif._id.toString() + idx}
                         className={cn(
                           "px-4 py-3 text-sm border-b last:border-0",
-                          notif.read ? "bg-bg-alt" : "bg-matchita-300"
+                          notif.read ? "bg-bg-alt" : "bg-paul-300"
                         )}
                       >
                         <div className="font-medium">{notif.message}</div>
                         <div>Create component for this notif</div>
-                        <div className="text-xs text-matchita-400 mt-1">
+                        <div className="text-xs text-paul-400 mt-1">
                           {formatDistanceToNow(new Date(notif.createdAt), {
                             addSuffix: true,
                           })}

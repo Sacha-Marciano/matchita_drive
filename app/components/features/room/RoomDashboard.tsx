@@ -104,7 +104,7 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
   // ─── Render ───────────────────────────────────────────────
   return (
     <motion.div
-      className="w-full bg-bg-alt text-matchita-text-alt rounded-2xl shadow p-6 mb-6 flex flex-col gap-4"
+      className="w-full bg-bg-alt text-paul-text-alt rounded-2xl shadow p-6 mb-6 flex flex-col gap-4"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -145,16 +145,16 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
               Invite
             </div>
           </div>
-          <div className="w-full h-[100px] overflow-x-auto rounded-2xl border border-matchita-600 bg-background shadow-sm">
+          <div className="w-full h-[100px] overflow-x-auto rounded-2xl border border-paul-600 bg-background shadow-sm">
             <table className="min-w-full table-auto text-sm text-left">
-              <thead className="bg-muted text-muted-foreground border-b-2 divide-matchita-800">
+              <thead className="bg-muted text-muted-foreground border-b-2 divide-paul-800">
                 <tr>
                   <th className="px-2 py-1.5 font-medium">Name</th>
                   <th className="px-2 py-1.5 font-medium">Email</th>
                   <th className="px-2 py-1.5 font-medium">Role</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-matchita-800">
+              <tbody className="divide-y divide-paul-800">
                 {owner && (
                   <tr className="hover:bg-muted/50 transition">
                     <td className="px-2 py-1.5 font-semibold">{owner.name || "Owner"}</td>
@@ -175,7 +175,7 @@ export default function RoomDashboard({ room, documents, onEditTitle }: Props) {
         </div>
 
         {/* ─── Placeholder for Future Features ─────────────── */}
-        <div className="p-4 rounded-xl border border-matchita-800 flex items-center justify-center text-muted-foreground">
+        <div className="p-4 rounded-xl border border-paul-800 flex items-center justify-center text-muted-foreground">
           Coming soon: User activity / Invite system
         </div>
       </div>

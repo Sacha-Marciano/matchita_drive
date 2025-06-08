@@ -43,7 +43,7 @@ onClose()  ;
       <div
         className={cn(
           "px-4 py-3 text-sm rounded-xl",
-          notif.read ? "bg-bg-alt" : "bg-matchita-300"
+          notif.read ? "bg-bg-alt" : "bg-paul-300"
         )}
       >
         <div className="font-medium">{notif.message}</div>
@@ -61,7 +61,7 @@ onClose()  ;
             </Button>
           </div>
         )}
-        <div className="text-xs text-matchita-400 mt-1">
+        <div className="text-xs text-paul-400 mt-1">
           {formatDistanceToNow(new Date(notif.createdAt), {
             addSuffix: true,
           })}

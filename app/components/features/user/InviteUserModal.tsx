@@ -88,7 +88,7 @@ export default function InviteUserModal({ isOpen, onClose, room }: Props) {
             id="invite-email"
             value={userEmail}
             onChange={(e) => setUserEmail(e.target.value)}
-            className="ml-2 border border-matchita-500 rounded-lg focus:outline-matchita-700 px-2 py-1 w-full"
+            className="ml-2 border border-paul-500 rounded-lg focus:outline-paul-700 px-2 py-1 w-full"
           />
           <Search
             size={36}
@@ -112,7 +112,7 @@ export default function InviteUserModal({ isOpen, onClose, room }: Props) {
           <h2 className="text-xl font-semibold justify-self-start">
             1 user was found
           </h2>
-          <div className="w-full p-2 border border-matchita-600 rounded-lg flex justify-between items-center">
+          <div className="w-full p-2 border border-paul-600 rounded-lg flex justify-between items-center">
             <p>{foundUser.name}</p>
             <Button
               size="sm"

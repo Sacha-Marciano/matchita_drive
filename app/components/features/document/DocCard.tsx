@@ -132,7 +132,7 @@ export default function DocCard({
 
   // ─── Render ───────────────────────────────────────────────
   return (
-    <div className="relative border h-[251px] p-4 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt text-matchita-text-alt">
+    <div className="relative border h-[251px] p-4 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt text-paul-text-alt">
       {mode === "normal" && (
         <div className="h-full flex flex-col justify-between gap-4">
           {/* Header */}
@@ -163,13 +163,13 @@ export default function DocCard({
                 </OptionsMenu>
               </div>
             )}
-            <span className="text-sm text-matchita-500">
+            <span className="text-sm text-paul-500">
               🗂️ Folder:{" "}
               <span className="font-medium">
                 {document.folder || "Unsorted"}
               </span>
             </span>
-            <span className="text-sm text-matchita-500">
+            <span className="text-sm text-paul-500">
               🕒 Created {formatDistanceToNow(new Date(document.createdAt))} ago
             </span>
           </div>
@@ -180,14 +180,14 @@ export default function DocCard({
               {document.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="bg-matchita-100 text-matchita-600 px-2 py-0.5 rounded-full"
+                  className="bg-paul-100 text-paul-600 px-2 py-0.5 rounded-full"
                 >
                   {tag}
                 </span>
               ))}
             </div>
           ) : (
-            <div className="text-xs text-matchita-400">No tags</div>
+            <div className="text-xs text-paul-400">No tags</div>
           )}
 
           {/* Actions */}
@@ -202,7 +202,7 @@ export default function DocCard({
 
       {mode === "delete" && (
         <div className="flex flex-col justify-between items-center gap-4 md:gap-6 lg:gap-8">
-          <p className="text-matchita-text-alt text-xl font-bold">
+          <p className="text-paul-text-alt text-xl font-bold">
             Are you sure ?
           </p>
           <p>
@@ -222,7 +222,7 @@ export default function DocCard({
 
       {mode === "teaser" && (
         <div className="h-full flex flex-col justify-between items-center z-50">
-          <div className="border p-2 bg-bg text-matchita-text w-full rounded-lg overflow-y-auto">
+          <div className="border p-2 bg-bg text-paul-text w-full rounded-lg overflow-y-auto">
             <p className="font-semibold"> {document.teaser} </p>
           </div>
           <div className="flex items-center justify-between w-full">

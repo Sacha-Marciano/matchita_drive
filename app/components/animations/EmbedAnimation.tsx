@@ -22,13 +22,13 @@ export default function VectorizationAnimation() {
   return (
     <div className="relative w-40 h-40 flex items-center justify-center overflow-hidden">
       {/* Document box */}
-      <div className="w-16 h-20 bg-matchita-500 rounded-sm shadow-md z-0" />
+      <div className="w-16 h-20 bg-paul-500 rounded-sm shadow-md z-0" />
 
       {/* Floating transforming characters */}
       {floatingItems.map(({ id, start, end, left, delay, top }) => (
         <motion.div
           key={id}
-          className="absolute text-matchita-600 font-bold text-sm"
+          className="absolute text-paul-600 font-bold text-sm"
           style={{ left, top }}
           animate={{ y: ["0%", "-60%"], opacity: [1, 1, 0] }}
           transition={{

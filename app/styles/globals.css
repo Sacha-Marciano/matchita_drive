@@ -11,7 +11,7 @@
 }
 
 body {
-  @apply bg-bg text-matchita-text;
+  @apply bg-bg text-paul-text;
 }
 
 @theme {
@@ -27,16 +27,16 @@ body {
   --font-primary: var(--font-poppins), sans-serif;
 
   /* Main Theme Colors */
-  --color-matchita-50: #faf5ff;
-  --color-matchita-100: #f3e8ff;
-  --color-matchita-200: #e9d5ff;
-  --color-matchita-300: #d8b4fe;
-  --color-matchita-400: #c084fc;
-  --color-matchita-500: #a855f7;
-  --color-matchita-600: #9333ea;
-  --color-matchita-700: #7e22ce;
-  --color-matchita-800: #6b21a8;
-  --color-matchita-900: #581c87;
+  --color-paul-50: #faf5ff;
+  --color-paul-100: #f3e8ff;
+  --color-paul-200: #e9d5ff;
+  --color-paul-300: #d8b4fe;
+  --color-paul-400: #c084fc;
+  --color-paul-500: #a855f7;
+  --color-paul-600: #9333ea;
+  --color-paul-700: #7e22ce;
+  --color-paul-800: #6b21a8;
+  --color-paul-900: #581c87;
 
   /* Accent Colors */
   --color-accent: #38bdf8; /* Light sky blue */
@@ -53,17 +53,17 @@ body {
   --color-border-disabled: #d8b4fe;
 
   /* Hover */
-  --color-hover: var(--color-matchita-300);
+  --color-hover: var(--color-paul-300);
 
   /* Texts */
-  --color-matchita-text: #fdf4ff;
-  --color-matchita-text-alt: #7e22ce;
-  --color-matchita-text-disabled: gray;
+  --color-paul-text: #fdf4ff;
+  --color-paul-text-alt: #7e22ce;
+  --color-paul-text-disabled: gray;
 
   /* Core Theme Tokens */
-  --color-primary: var(--color-matchita-600);
-  --color-primary-light: var(--color-matchita-400);
-  --color-primary-dark: var(--color-matchita-800);
+  --color-primary: var(--color-paul-600);
+  --color-primary-light: var(--color-paul-400);
+  --color-primary-dark: var(--color-paul-800);
 
   --color-secondary: #1e1b4b; /* deep indigo gray */
   --color-secondary-light: #3f3cbb;

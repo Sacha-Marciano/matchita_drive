@@ -33,11 +33,11 @@ export default function FolderCard({ folderName, documents }: Props) {
 
   // ─── Render ────────────────────────────────────────────────
   return (
-    <div className="w-full border p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt text-matchita-text-alt space-y-4">
+    <div className="w-full border p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt text-paul-text-alt space-y-4">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold">{folderName}</h2>
-        <span className="text-sm text-matchita-400">
+        <span className="text-sm text-paul-400">
           {documents.length} document{documents.length > 1 ? "s" : ""}
         </span>
       </div>
@@ -48,24 +48,24 @@ export default function FolderCard({ folderName, documents }: Props) {
           docTitles.map((tag) => (
             <span
               key={tag}
-              className="bg-matchita-100 text-matchita-600 px-2 py-0.5 rounded-full"
+              className="bg-paul-100 text-paul-600 px-2 py-0.5 rounded-full"
             >
               {tag}
             </span>
           ))
         ) : (
-          <span className="bg-matchita-100 text-matchita-600 px-2 py-0.5 rounded-full">
+          <span className="bg-paul-100 text-paul-600 px-2 py-0.5 rounded-full">
             No tags
           </span>
         )}
         {extraTags > 0 && (
-          <span className="text-matchita-400">+{extraTags} more</span>
+          <span className="text-paul-400">+{extraTags} more</span>
         )}
       </div>
 
       {/* Footer */}
       <div className="w-full flex items-center justify-between">
-        <div className="text-sm text-matchita-500">
+        <div className="text-sm text-paul-500">
           🕒 Last added: {formatDistanceToNow(new Date(newestDoc.createdAt))} ago
         </div>
         <Button size="md" onClick={() => setIsOpen(!isOpen)}>

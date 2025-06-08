@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
         title: doc.title,
         folder: doc.folder,
         tags: doc.tags,
+        teaser: doc.teaser,
         createdAt: doc.createdAt.toISOString(),
       }));
     } catch (error) {

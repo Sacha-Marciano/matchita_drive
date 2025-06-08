@@ -24,15 +24,15 @@ export default function ClassificationAnimation() {
   };
 
   const itemColors = [
-    "bg-matchita-300",
-    "bg-matchita-700",
-    "bg-matchita-900"
+    "bg-paul-300",
+    "bg-paul-700",
+    "bg-paul-900"
   ];
 
   return (
     <div className="relative w-40 h-40 flex items-center justify-center">
       {/* Central classification box */}
-      <div className="w-16 h-20 bg-matchita-500 rounded-md shadow-inner z-0" />
+      <div className="w-16 h-20 bg-paul-500 rounded-md shadow-inner z-0" />
 
       {/* Animated items */}
       {itemColors.map((color, i) => (

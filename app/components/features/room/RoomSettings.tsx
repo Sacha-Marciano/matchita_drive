@@ -47,8 +47,8 @@ export default function RoomSettings({ room }: Props) {
       {/* Room Info Box */}
       <div className="bg-bg-alt w-full rounded-xl p-4">
         <div className="flex items-center justify-between">
-          <p className="font-bold text-matchita-text-alt">Room&apos;s Name</p>
-          <p className="font-semibold text-matchita-text-alt">{room.title}</p>
+          <p className="font-bold text-paul-text-alt">Room&apos;s Name</p>
+          <p className="font-semibold text-paul-text-alt">{room.title}</p>
         </div>
       </div>
 
@@ -68,7 +68,7 @@ export default function RoomSettings({ room }: Props) {
 
         {/* Modal Panel */}
         <div className="fixed inset-0 flex items-center justify-center gap-6 p-4 text-center">
-          <div className="bg-white p-6 rounded-xl max-w-md w-full shadow-xl text-matchita-text-alt space-y-2">
+          <div className="bg-white p-6 rounded-xl max-w-md w-full shadow-xl text-paul-text-alt space-y-2">
             <h2 className="text-2xl font-bold">
               Deleting a room is irreversible!
             </h2>

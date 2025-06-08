@@ -15,7 +15,7 @@ export default function DuplicateCheckAnimation() {
           ease: ["linear"],
         }}
       >
-        <CheckCircle className="text-matchita-600 w-8 h-8" />
+        <CheckCircle className="text-paul-600 w-8 h-8" />
       </motion.div>
 
       <motion.div
@@ -28,7 +28,7 @@ export default function DuplicateCheckAnimation() {
           ease: ["linear"],
         }}
       >
-        <CheckCircle className="text-matchita-600 w-8 h-8" />
+        <CheckCircle className="text-paul-600 w-8 h-8" />
       </motion.div>
     </div>
   );

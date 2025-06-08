@@ -60,12 +60,12 @@ export default function Header() {
 
   // ─── Render ──────────────────────────────────────────────
   return (
-    <div className="relative w-full flex items-center justify-center h-[10vh]">
+    <div className="relative w-full flex items-center justify-center h-[10vh] bg-transparent">
       {/* Logo redirect to home */}
       <Link href={"/"}>
         <Image
           src={"/brand/logo-transparent.png"}
-          alt="Matchita Logo"
+          alt="paul Logo"
           height={125}
           width={150}
         />
@@ -79,7 +79,7 @@ export default function Header() {
         {/* User initials badge linking to profile */}
         {initials && (
           <Link href={"/profile"}>
-            <div className="bg-matchita-300 p-2 flex items-center justify-center text-matchita-900 rounded-xl cursor-pointer font-semibold text-xs md:text-base lg:text-lg">
+            <div className="bg-paul-300 p-2 flex items-center justify-center text-paul-900 rounded-xl cursor-pointer font-semibold text-xs md:text-base lg:text-lg">
               {initials}
             </div>
           </Link>

@@ -25,7 +25,7 @@ const Steps = ({
       {step === null && (
         <div className="text-lg font-semibold">
           <p>Upload your doc,</p>
-          <p>Let Matchita do the work!</p>
+          <p>Let paul do the work!</p>
         </div>
       )}
       {step === "extract" && <ExtractionAnimation />}

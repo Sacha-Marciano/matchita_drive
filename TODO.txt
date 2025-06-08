@@ -1,21 +1,18 @@
 #TODO:
 
 ##IN PROGRESS
-                add "added by " in doc modals,schema types ect. and prevent deletion if not owner
-                missing file tab
+                 set messages in variable to save them
+                 bulk upload
 ### BACKLOG
-                Discrepencies check (file format, value format , ect...)
-                    (send chat to user on refresh and give advice : in folder "financial plannin" you have budget x 3 and one cost documents, consider moving the cost document to another folder or renaming the folder to finance)
                 Translate answers based on the question (+ translate docs)
-                move doc from folder to folder
-                add teaser to chat prompt to refine the findings + set messages in variable to save them
+                move doc from folder to folder + change folder names
                 create notification for tabs
-                bulk upload feature
                 review viewer permissions
                 style viewers modal
                 review profile (add viewers and viewers modal)
                 navigation menu
-                create context with user rooms and docs and users
+                create context with rooms and docs and users
+                Add description of the chat when no messages.
                 
 #### final 
                 Deploy on cloud run

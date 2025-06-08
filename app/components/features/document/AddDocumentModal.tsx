@@ -70,12 +70,15 @@ export default function AddDocModal({
     fetchFiles(session, setFiles, setOptions, setShowSignoutMessage);
   }, [session]);
 
+  useEffect(() => {
+console.log(selectedFile)  }, [selectedFile]);
+
   // ─── Handlers ─────────────────────────────────────────────
 
   const handleSubmit = async () => {
     if (!selectedFile || !session?.accessToken) return;
 
-    const { id, mimeType } = selectedFile;
+    const { id, mimeType,name } = selectedFile;
 
     ///////////////////////// STEP 1 - Extract ///////////////////////////////
     setStep("extract");
@@ -105,6 +108,7 @@ export default function AddDocModal({
     ///////////////////////// STEP 4 - Classify ///////////////////////////////
     setStep("classify");
     const classifyData = await classifyText(
+      name,
       extractedText,
       room.folders,
       room.tags
@@ -138,11 +142,12 @@ export default function AddDocModal({
     if (!selectedFile || !session?.accessToken || !actualText || !actualVector)
       return;
 
-    const { id, mimeType } = selectedFile;
+    const { id, mimeType,name } = selectedFile;
 
     ///////////////////////// STEP 1 - Classify ///////////////////////////////
     setStep("classify");
     const classifyData = await classifyText(
+      name,
       actualText,
       room.folders,
       room.tags
@@ -162,7 +167,7 @@ export default function AddDocModal({
       teaser: classifyData.teaser,
       addedBy: user._id,
     };
-    ///////////////////////// STEP 6 - Save new document ///////////////////////////////
+    ///////////////////////// STEP 3 - Save new document ///////////////////////////////
     const saveData = await saveDocument(docToSave, room._id.toString());
 
     setStep(null);

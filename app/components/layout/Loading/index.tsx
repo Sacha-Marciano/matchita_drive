@@ -31,7 +31,7 @@ export default function Loading({ message = "Loading..." }: LoadingProps) {
           />
         ))}
       </div>
-      <p className="mt-10 text-sm text-matchita-text italic animate-pulse font-bold">{message}</p>
+      <p className="mt-10 text-sm text-paul-text italic animate-pulse font-bold">{message}</p>
     </div>
   );
 }

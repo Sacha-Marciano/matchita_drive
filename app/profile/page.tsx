@@ -81,7 +81,7 @@ export default function ProfilePage() {
         </div>
 
         {/* User Info */}
-        <div className="flex flex-col gap-6 border border-white bg-bg-alt text-matchita-900 rounded-xl p-2 lg:p-4">
+        <div className="flex flex-col gap-6 border border-white bg-bg-alt text-paul-900 rounded-xl p-2 lg:p-4">
           <InfoRow label="Email" value={user.email} />
           <InfoRow label="Rooms" value={user.roomIds.length} />
           <InfoRow label="Docs handled" value={docHandled} />

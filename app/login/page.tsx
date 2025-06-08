@@ -41,12 +41,12 @@ export default function LoginPage() {
 
       {/* Title */}
       <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-        Unlock the power of Matchita!
+        Unlock the power of Paul!
       </h1>
 
       {/* Subtitle */}
       <p className="text-lg md:text-xl text-gray-200 max-w-xl mb-8 text-center">
-        Your intelligent workspace for documents. Matchita helps you organize,
+        Your intelligent workspace for documents. Paul helps you organize,
         search, and understand your files with AI, instantly.
       </p>
 

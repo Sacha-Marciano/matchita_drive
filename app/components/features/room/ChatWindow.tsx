@@ -1,7 +1,7 @@
 "use client";
 
 // ─── Framework & Core Imports ─────────────────────────────────
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Dispatch, SetStateAction } from "react";
 
 // ─── Icons ───────────────────────────────────────────────────
 import { SendHorizonal } from "lucide-react";
@@ -14,17 +14,21 @@ import { IMessage } from "@/app/types";
 type ChatWindowProps = {
   roomId: ParamValue;
   accessToken: string | null;
+  messages: IMessage[];
+  setMessages: Dispatch<SetStateAction<IMessage[]>>;
 };
 
 // ─── Component ───────────────────────────────────────────────
 const ChatWindow: React.FC<ChatWindowProps> = ({
   roomId,
   accessToken,
+  messages,
+  setMessages
 }) => {
   // ─── State ────────────────────────────────────────────────
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  // const [messages, setMessages] = useState<IMessage[]>([]);
 
   // ─── Refs ─────────────────────────────────────────────────
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -104,7 +108,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   // ─── Render ───────────────────────────────────────────────
   return (
-    <div className="flex flex-col bg-bg-alt p-4 mt-4 rounded-2xl h-[65vh] border border-border text-matchita-900">
+    <div className="flex flex-col bg-bg-alt p-4 mt-4 rounded-2xl h-[65vh] border border-border text-paul-900">
       {/* Chat bubbles area */}
       <div className="flex-1 overflow-y-auto space-y-3 pr-2">
         {messages.map((msg, idx) =>
@@ -120,18 +124,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             // Agent message bubble
             <div
               key={idx}
-              className="p-3 rounded-xl max-w-[80%] whitespace-pre-line border space-y-2 bg-matchita-300 text-matchita-900 self-start mr-auto"
+              className="p-3 rounded-xl max-w-[80%] whitespace-pre-line border space-y-2 bg-paul-300 text-paul-900 self-start mr-auto"
             >
               <p>{msg.content.agentNote}</p>
 
               {/* Highlighted quoted source text */}
-              <div className="p-2 bg-bg-alt text-matchita-900 rounded-2xl">
+              <div className="p-2 bg-bg-alt text-paul-900 rounded-2xl">
                 <p className="whitespace-pre-wrap italic text-center">{`"[...] ${msg.content.text} [...]"`}</p>
               </div>
 
               {/* Source title link (clickable) */}
               {msg.content.source && (
-                <div className="mt-2 text-sm text-matchita-text-alt">
+                <div className="mt-2 text-sm text-paul-text-alt">
                   <div
                     className="cursor-pointer underline"
                     onClick={() =>
@@ -162,7 +166,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       {/* Input area with send button */}
       <div className="mt-4 flex items-center border border-border rounded-xl bg-white">
         <textarea
-          className="flex-1 resize-none p-2 rounded-l-xl bg-transparent focus:outline-none text-matchita-900"
+          className="flex-1 resize-none p-2 rounded-l-xl bg-transparent focus:outline-none text-paul-900"
           rows={1}
           placeholder="Ask about your documents..."
           value={input}

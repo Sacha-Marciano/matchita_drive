@@ -26,7 +26,7 @@ export default function OptionsMenu({ children }: OptionsMenuProps) {
         onClick={() => setOpen(!open)}
         className=" p-2 rounded-full hover:bg-muted transition cursor-pointer"
       >
-        <span className="text-xl text-matchita-text-alt ">⋮</span>
+        <span className="text-xl text-paul-text-alt ">⋮</span>
       </button>
 
       {open && (
