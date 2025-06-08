@@ -15,6 +15,7 @@ type SelectProps = {
   size?: "sm" | "md" | "lg";
   variant?: "primary" | "secondary" | "disabled";
   label?: string;
+  defaultText?: string;
 
   value: string | null;
   options: Option[] | null;
@@ -26,6 +27,8 @@ const Select = ({
   size = "md",
   variant = "primary",
   label,
+  defaultText = "Select A Doc",
+
   value,
   options,
   onChange,
@@ -70,13 +73,16 @@ const Select = ({
               sizeClass,
               variantClass,
               "w-full flex justify-between items-center text-nowrap text-ellipsis",
-              variant === "disabled" ? "cursor-not-allowed opacity-70" : "cursor-pointer",
+              variant === "disabled"
+                ? "cursor-not-allowed opacity-70"
+                : "cursor-pointer",
               className
             )}
             onClick={() => setIsOpen(!isOpen)}
           >
             <span className="overflow-hidden text-ellipsis mr-1">
-              {options?.find((opt) => opt.value === value)?.name || "Select a doc"}
+              {options?.find((opt) => opt.value === value)?.name ||
+                defaultText}
             </span>
             <div className="flex items-center gap-2">
               {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -95,10 +101,7 @@ const Select = ({
                   key={index}
                   value={option.value}
                   className={({ selected }) =>
-                    cn(
-                      "cursor-pointer px-4 py-2",
-                      selected && "font-semibold"
-                    )
+                    cn("cursor-pointer px-4 py-2", selected && "font-semibold")
                   }
                 >
                   {option.name}

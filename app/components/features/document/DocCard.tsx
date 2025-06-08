@@ -13,6 +13,7 @@ import OptionsMenu from "@/app/components/shared/ui/OptionMenu";
 import { IDocument, IRoom } from "@/app/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Select from "../../shared/ui/Select";
 
 // ─── Prop Types ──────────────────────────────────────────────
 interface DocCardProps {
@@ -20,6 +21,7 @@ interface DocCardProps {
   docList?: IDocument[];
   setDocList?: Dispatch<SetStateAction<IDocument[]>>;
   room?: IRoom;
+  folders?: Record<string, IDocument[]>;
 }
 
 // ─── Component ───────────────────────────────────────────────
@@ -28,15 +30,25 @@ export default function DocCard({
   docList,
   setDocList,
   room,
+  folders,
 }: DocCardProps) {
   // ─── Hooks ────────────────────────────────────────────────
   const { data: session, status } = useSession();
   const router = useRouter();
 
   // ─── State ────────────────────────────────────────────────
-  const [mode, setMode] = useState<"normal" | "delete" | "teaser">("normal");
+  const [mode, setMode] = useState<"normal" | "delete" | "teaser" | "move">(
+    "normal"
+  );
   const [isCopied, setIsCopied] = useState(false);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [moveToFolder, setMoveToFolder] = useState<string | null>("");
+
+  // ─── Derived Data ──────────────────────────────────────────────
+  const folderOptions = Object.keys(folders || {}).map((key) => ({
+    name: key,
+    value: key,
+  }));
 
   // ─── Effects ──────────────────────────────────────────────
   useEffect(() => {
@@ -130,6 +142,22 @@ export default function DocCard({
     setTimeout(() => setIsCopied(false), 5000);
   };
 
+  const handleMoveFolder = async () => {
+    if (moveToFolder === "" || !docList || !setDocList) return;
+
+    const moveRes = await fetch(`/api/doch/${document._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ folder: moveToFolder }),
+    });
+
+    const moveData = await moveRes.json();
+
+    const updatedList = docList.filter((doc) => doc._id !== moveData.data._id);
+    setDocList([moveData.data, ...updatedList]);
+    setMode("normal");
+  };
+
   // ─── Render ───────────────────────────────────────────────
   return (
     <div className="relative border h-[251px] p-4 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt text-paul-text-alt">
@@ -146,10 +174,15 @@ export default function DocCard({
             {docList && (
               <div className="absolute right-1 top-1">
                 <OptionsMenu>
-                  <div className="flex flex-col items-center justify-center">
+                  <div className="flex flex-col items-center justify-center gap-1">
                     <Button size="sm" onClick={() => setMode("teaser")}>
                       Teaser
                     </Button>
+                    {isOwner && (
+                      <Button size="sm" onClick={() => setMode("move")}>
+                        Move
+                      </Button>
+                    )}
                     {isOwner && (
                       <Button
                         variant="delete"
@@ -202,9 +235,7 @@ export default function DocCard({
 
       {mode === "delete" && (
         <div className="flex flex-col justify-between items-center gap-4 md:gap-6 lg:gap-8">
-          <p className="text-paul-text-alt text-xl font-bold">
-            Are you sure ?
-          </p>
+          <p className="text-paul-text-alt text-xl font-bold">Are you sure ?</p>
           <p>
             Deleting document <strong>&quot;{document.title}&quot;</strong> is
             irreversible
@@ -232,6 +263,23 @@ export default function DocCard({
             <Button onClick={handleCopy}>
               {isCopied ? "Copied!" : "Copy Teaser"}
             </Button>
+          </div>
+        </div>
+      )}
+      {mode === "move" && (
+        <div className="h-full relative z-50">
+          <Select
+          label="Move Doc to folder :"
+            value={moveToFolder}
+            options={folderOptions}
+            onChange={(newValue: string | null) => setMoveToFolder(newValue)}
+            defaultText="Select a folder"
+          />
+          <div className="flex items-center justify-between w-full absolute bottom-0">
+            <Button variant="secondary" onClick={() => setMode("normal")}>
+              Back
+            </Button>
+            <Button onClick={() => handleMoveFolder()}>Move</Button>
           </div>
         </div>
       )}

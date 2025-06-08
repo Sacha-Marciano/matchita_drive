@@ -41,9 +41,7 @@ export default function RoomPage() {
   const [user, setUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [docs, setDocs] = useState<IDocument[]>([]);
-  const [folders, setFolders] = useState<Record<string, IDocument[]> | null>(
-    null
-  );
+  const [folders, setFolders] = useState<Record<string, IDocument[]>>({});
   const [accessToken, setAccessToken] = useState("");
   const [showSignoutMessage, setShowSignoutMessage] = useState(false);
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -146,7 +144,14 @@ export default function RoomPage() {
     },
     {
       label: "Docs",
-      content: <DocsList docs={docs} setDocList={setDocs} room={room} />,
+      content: (
+        <DocsList
+          docs={docs}
+          setDocList={setDocs}
+          room={room}
+          folders={folders}
+        />
+      ),
     },
     {
       label: "Chat",
