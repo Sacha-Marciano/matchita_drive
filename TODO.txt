@@ -1,13 +1,10 @@
 #TODO:
 
 ##IN PROGRESS
-                 set messages in variable to save them
-                 bulk upload
-### BACKLOG
                 Translate answers based on the question (+ translate docs)
+### BACKLOG
                 move doc from folder to folder + change folder names
-                create notification for tabs
-                review viewer permissions
+(                create notification for tabs)                review viewer permissions
                 style viewers modal
                 review profile (add viewers and viewers modal)
                 navigation menu
