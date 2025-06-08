@@ -68,7 +68,7 @@ export default function DocCard({
     const res = await fetch(`/api/doch/${document._id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newValue }),
+      body: JSON.stringify({ title: newValue }),
     });
 
     const editData = await res.json();

@@ -1,16 +1,17 @@
 #TODO:
 
 ##IN PROGRESS
-                translate docs
-### BACKLOG
                 move doc from folder to folder + change folder names
-(                create notification for tabs)                review viewer permissions
+### BACKLOG
+                
+(                create notification for tabs) 
+               review viewer permissions
                 style viewers modal
                 review profile (add viewers and viewers modal)
                 navigation menu
                 create context with rooms and docs and users
                 Add description of the chat when no messages.
-                
+                language context + translate docs (gemini route)
 #### final 
                 Deploy on cloud run
                 Include animations for chat thinking

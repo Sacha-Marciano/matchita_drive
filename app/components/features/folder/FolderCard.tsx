@@ -10,6 +10,7 @@ import type { IDocument } from "@/app/types";
 // ─── UI & Layout ──────────────────────────────────────────────
 import Button from "../../shared/ui/Button";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import EditableDisplay from "../../shared/ui/EditableDisplay";
 
 // ─── Props ────────────────────────────────────────────────────
 type Props = {
@@ -26,17 +27,36 @@ export default function FolderCard({ folderName, documents }: Props) {
   const allTags = documents.flatMap((doc) => doc.title);
   const docTitles = [...new Set(allTags)].slice(0, 4);
   const extraTags = allTags.length - docTitles.length;
-
+  const [title, setTitle] = useState<string>(folderName);
   const newestDoc = documents.reduce((latest, doc) =>
     new Date(doc.createdAt) > new Date(latest.createdAt) ? doc : latest
   );
 
+  // ─── Handlers ──────────────────────────────────────────
+  const handleEditFolder = async (newValue: string) => {
+    for (const doc of documents) {
+      const res = await fetch(`/api/doch/${doc._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ folder: newValue }),
+      });
+      if (res.ok) {
+        setTitle(newValue)
+      }
+    }
+  };
   // ─── Render ────────────────────────────────────────────────
   return (
     <div className="w-full border p-5 rounded-2xl shadow-md hover:shadow-lg transition bg-bg-alt text-paul-text-alt space-y-4">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">{folderName}</h2>
+        {/* <h2 className="text-2xl font-semibold">{folderName}</h2> */}
+        <EditableDisplay
+          text={title}
+          handleEdit={(newValue: string) => handleEditFolder(newValue)}
+          size="lg"
+          variant="secondary"
+        />
         <span className="text-sm text-paul-400">
           {documents.length} document{documents.length > 1 ? "s" : ""}
         </span>
@@ -66,7 +86,8 @@ export default function FolderCard({ folderName, documents }: Props) {
       {/* Footer */}
       <div className="w-full flex items-center justify-between">
         <div className="text-sm text-paul-500">
-          🕒 Last added: {formatDistanceToNow(new Date(newestDoc.createdAt))} ago
+          🕒 Last added: {formatDistanceToNow(new Date(newestDoc.createdAt))}{" "}
+          ago
         </div>
         <Button size="md" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-1">

@@ -11,15 +11,19 @@ export const getDocumentById = (docId: Types.ObjectId) =>
 export const deleteDocument = (docId: Types.ObjectId) =>
   Document.findByIdAndDelete(docId);
 
-export const updateDocumentTagsFolder = (
-  docId: Types.ObjectId,
-  tags: string[],
-  folder: string
-) => Document.findByIdAndUpdate(docId, { tags, folder });
+// export const updateDocumentTagsFolder = (
+//   docId: Types.ObjectId,
+//   tags: string[],
+//   folder: string
+// ) => Document.findByIdAndUpdate(docId, { tags, folder });
 
-export const updateDocumentName = (docId: Types.ObjectId, name: string) =>
-  Document.findByIdAndUpdate(
-    docId,
-    { $set: { title: name } },
-    { new: true, runValidators: true }
-  );
+// export const updateDocumentName = (docId: Types.ObjectId, name: string) =>
+//   Document.findByIdAndUpdate(
+//     docId,
+//     { $set: { title: name } },
+//     { new: true, runValidators: true }
+//   );
+
+export async function updateDocument(documentId: string, updates: Partial<IDocument>) {
+  return await Document.findByIdAndUpdate(documentId, updates, { new: true });
+}
