@@ -16,16 +16,18 @@ import SignoutMessage from "@/app/components/shared/modals/ForcedSignoutModal";
 import RoomSettings from "@/app/components/features/room/RoomSettings";
 import RoomDashboard from "@/app/components/features/room/RoomDashboard";
 import Tabs from "@/app/components/shared/ui/Tabs";
-
-// ─── Types ───────────────────────────────────────────────────
-import { IMessage, IRoom } from "@/app/types";
-import { IUser } from "@/app/types";
-import { IDocument } from "@/app/types";
 import FoldersList from "@/app/components/features/folder/FoldersList";
 import DocsList from "@/app/components/features/document/DocsList";
 
-// ─── Utils / Constants ───────────────────────────────────────
-// import { YOUR_UTILITY_FN } from "@/lib/utils";
+// ─── Types ───────────────────────────────────────────────────
+import { IMessage } from "@/app/types";
+import { IDocument } from "@/app/types";
+
+// ─── Context Suscribe ───────────────────────────────────────
+import { useUser } from "@/app/contexts/UserContext";
+import { useDocuments } from "@/app/contexts/DocumentsContext";
+import { useRoom } from "@/app/contexts/RoomContext";
+
 
 // ─────────────────────────────────────────────────────────────
 
@@ -34,13 +36,13 @@ export default function RoomPage() {
   const router = useRouter();
   const { id } = useParams();
   const { data: session, status } = useSession();
+  const { user, setUser } = useUser();
+  const { documents, setDocuments } = useDocuments();
+  const {room, setRoom} = useRoom();
 
   // ─── State ────────────────────────────────────────────────
-  const [room, setRoom] = useState<IRoom>();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [docs, setDocs] = useState<IDocument[]>([]);
   const [folders, setFolders] = useState<Record<string, IDocument[]>>({});
   const [accessToken, setAccessToken] = useState("");
   const [showSignoutMessage, setShowSignoutMessage] = useState(false);
@@ -71,7 +73,7 @@ export default function RoomPage() {
 
         setUser(userData.data);
         setRoom(roomData.data);
-        setDocs(docData.data);
+        setDocuments(docData.data);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -83,7 +85,7 @@ export default function RoomPage() {
   }, [session, status]);
 
   useEffect(() => {
-    const docsByFolders = docs.reduce(
+    const docsByFolders = documents.reduce(
       (acc: Record<string, IDocument[]>, doc) => {
         if (!acc[doc.folder]) acc[doc.folder] = [];
         acc[doc.folder].push(doc);
@@ -92,7 +94,7 @@ export default function RoomPage() {
       {}
     );
     setFolders(docsByFolders);
-  }, [docs]);
+  }, [documents]);
 
   // ─── Early Return (Auth or Loading) ───────────────────────
   if (status === "loading" || loading || !user || !room) {
@@ -146,8 +148,8 @@ export default function RoomPage() {
       label: "Docs",
       content: (
         <DocsList
-          docs={docs}
-          setDocList={setDocs}
+          docs={documents}
+          setDocList={setDocuments}
           room={room}
           folders={folders}
         />
@@ -176,7 +178,7 @@ export default function RoomPage() {
       {/* Header / Dashboard */}
       <RoomDashboard
         room={room}
-        documents={docs}
+        documents={documents}
         onEditTitle={handleEditRoom}
       />
 
@@ -197,10 +199,6 @@ export default function RoomPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         session={session}
-        room={room}
-        documents={docs}
-        user={user}
-        setDocuments={setDocs}
         setShowSignoutMessage={setShowSignoutMessage}
       />
 

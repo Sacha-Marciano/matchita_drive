@@ -10,10 +10,10 @@ import { useSession, signOut } from "next-auth/react";
 // ─── Components ──────────────────────────────────────────────
 import Loading from "@/app/components/layout/Loading";
 import Button from "@/app/components/shared/ui/Button";
-
-// ─── Types ───────────────────────────────────────────────────
-import { IUser } from "@/app/types";
 import InfoRow from "../components/shared/ui/InfoRow";
+
+// ─── Context Subscribe ───────────────────────────────────────────────────
+import { useUser } from "../contexts/UserContext";
 
 // ─────────────────────────────────────────────────────────────
 
@@ -23,7 +23,7 @@ export default function ProfilePage() {
   const { data: session, status } = useSession();
 
   // ─── State ────────────────────────────────────────────────
-  const [user, setUser] = useState<IUser | null>(null);
+  const { user, setUser } = useUser();
   const [docHandled, setDocHandled] = useState<string>("");
 
   // ─── Derived Values ───────────────────────────────────────

@@ -6,6 +6,10 @@ import { Poppins } from "next/font/google";
 
 import "./styles/globals.css";
 import Header from "@/app/components/layout/Header";
+import { UserProvider } from "./contexts/UserContext";
+import { RoomsProvider } from "./contexts/RoomsContext";
+import { DocumentsProvider } from "./contexts/DocumentsContext";
+import { RoomProvider } from "./contexts/RoomContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -28,8 +32,16 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable}`}>
         <AuthProvider>
-            <Header />
-            {children}
+          <UserProvider>
+            <RoomsProvider>
+              <RoomProvider>
+                <DocumentsProvider>
+                  <Header />
+                  {children}
+                </DocumentsProvider>
+              </RoomProvider>
+            </RoomsProvider>
+          </UserProvider>
         </AuthProvider>
       </body>
     </html>

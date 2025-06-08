@@ -14,7 +14,7 @@ import Select from "../../shared/ui/Select";
 import BaseModal from "../../shared/modals/BaseModal";
 
 // ─── Types ───────────────────────────────────────────────────
-import { DriveFile, IRoom, IDocument, IStep, IUser } from "@/app/types";
+import { DriveFile, IDocument, IStep } from "@/app/types";
 
 // ─── Utils / Constants ───────────────────────────────────────
 import {
@@ -27,16 +27,15 @@ import {
 } from "./DocumentMethods";
 import { duplicateCheck } from "@/app/utils/DuplicateCheck";
 import Steps from "../../shared/ui/Steps";
+import { useUser } from "@/app/contexts/UserContext";
+import { useRoom } from "@/app/contexts/RoomContext";
+import { useDocuments } from "@/app/contexts/DocumentsContext";
 
 // ─── Prop Types ───────────────────────────────────────────────────
 type AddDocModalProps = {
   isOpen: boolean;
   onClose: () => void;
   session: Session | null;
-  room: IRoom;
-  documents: IDocument[];
-  user: IUser;
-  setDocuments: Dispatch<SetStateAction<IDocument[]>>;
   setShowSignoutMessage: Dispatch<SetStateAction<boolean>>;
 };
 
@@ -46,12 +45,13 @@ export default function AddDocModal({
   isOpen,
   onClose,
   session,
-  room,
-  documents,
-  user,
-  setDocuments,
   setShowSignoutMessage,
 }: AddDocModalProps) {
+  // ─── Hooks ────────────────────────────────────────────────
+  const { user } = useUser();
+  const { room } = useRoom();
+  const { documents, setDocuments } = useDocuments();
+
   // ─── State ────────────────────────────────────────────────
   const [files, setFiles] = useState<DriveFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<DriveFile | null>(null);
@@ -68,18 +68,13 @@ export default function AddDocModal({
 
   // ─── Effects ──────────────────────────────────────────────
   useEffect(() => {
-    // Fetches files from drive and set them in state variable
     fetchFiles(session, setFiles, setOptions, setShowSignoutMessage);
   }, [session]);
-
-  useEffect(() => {
-    console.log(selectedFile);
-  }, [selectedFile]);
 
   // ─── Handlers ─────────────────────────────────────────────
 
   const handleSubmit = async () => {
-    if (!selectedFile || !session?.accessToken) return;
+    if (!selectedFile || !session?.accessToken || !room || !user) return;
 
     const { id, mimeType, name } = selectedFile;
 
@@ -142,7 +137,14 @@ export default function AddDocModal({
   };
 
   const handleSaveAnyway = async () => {
-    if (!selectedFile || !session?.accessToken || !actualText || !actualVector)
+    if (
+      !selectedFile ||
+      !session?.accessToken ||
+      !actualText ||
+      !actualVector ||
+      !room ||
+      !user
+    )
       return;
 
     const { id, mimeType, name } = selectedFile;
@@ -181,7 +183,7 @@ export default function AddDocModal({
   };
 
   const handleBulkSubmit = async () => {
-    if (!selectedFiles || !session?.accessToken) return;
+    if (!selectedFiles || !session?.accessToken || !room || !user) return;
 
     for (const file of selectedFiles) {
       setSelectedFile(file);
@@ -328,13 +330,13 @@ export default function AddDocModal({
             </div>
           </div>
           <div className="h-[30vh] overflow-hidden w-full flex items-center justify-center text-center">
-          {/* Steps - animations */}
-          <Steps
-            step={step}
-            setStep={setStep}
-            duplicate={duplicate}
-            handleSaveAnyway={handleSaveAnyway}
-          />
+            {/* Steps - animations */}
+            <Steps
+              step={step}
+              setStep={setStep}
+              duplicate={duplicate}
+              handleSaveAnyway={handleSaveAnyway}
+            />
           </div>
 
           <div className="flex justify-end space-x-2 pt-2">

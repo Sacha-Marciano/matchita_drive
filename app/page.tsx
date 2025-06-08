@@ -14,9 +14,9 @@ import HomeDashboard from "./components/features/home/HomeDashboard";
 import Loading from "./components/layout/Loading";
 import Button from "./components/shared/ui/Button";
 
-// ─── Types ───────────────────────────────────────────────────
-import { IRoom } from "@/app/types";
-import { IUser } from "@/app/types";
+// ─── Context Subscribe ───────────────────────────────────────────────────
+import { useUser } from "./contexts/UserContext";
+import { useRooms } from "./contexts/RoomsContext";
 
 // ─────────────────────────────────────────────────────────────
 
@@ -24,12 +24,12 @@ export default function HomePage() {
   // ─── Hooks ────────────────────────────────────────────────
   const router = useRouter();
   const { data: session, status } = useSession();
+  const { user, setUser } = useUser();
+  const { rooms, setRooms } = useRooms();
 
   // ─── State ────────────────────────────────────────────────
-  const [rooms, setRooms] = useState<IRoom[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [user, setUser] = useState<IUser | null>(null);
 
   // ─── Effects ──────────────────────────────────────────────
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function HomePage() {
   }, [session, status, router]);
 
   // ─── Loading State ────────────────────────────────────────
-  if (status === "loading" || loading || !user) {
+  if (status === "loading" || loading || !user || !rooms) {
     return (
       <div className="h-[90vh] w-[100vw] flex items-center justify-center font-bold text-4xl">
         <Loading message="Loading Rooms" />
