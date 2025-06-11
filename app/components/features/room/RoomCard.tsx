@@ -8,29 +8,10 @@ import { IRoom } from "@/app/types";
 
 // ─── Prop Types ──────────────────────────────────────────────
 type RoomCardProps = {
-  // id: string;
-  // title: string;
-  // avatar: string;
-  // documentCount: number;
-  // folders: string[];
-  // tags: string[];
-  // viewerCount: number;
-  // createdAt: Date;
   isOwner: boolean;
   room: IRoom;
 };
 // ─── Component ───────────────────────────────────────────────
-// export default function RoomCard({
-//   id,
-//   title,
-//   avatar,
-//   documentCount,
-//   folders,
-//   tags,
-//   viewerCount,
-//   createdAt,
-//   isOwner,
-// }: RoomCardProps) {
 export default function RoomCard({ room, isOwner }: RoomCardProps) {
   // ─── Derived data ───────────────────────────────────────────────
   const documentCount = room.documentIds.length;

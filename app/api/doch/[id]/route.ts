@@ -89,52 +89,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PUT: Rename a document
-// export async function PUT(
-//   req: NextRequest,
-//   context: { params: Promise<{ id: string }> }
-// ) {
-//   await connectToDB();
-
-//   const { params } = context;
-//   const { id } = await params;
-
-//   if (!Types.ObjectId.isValid(id)) {
-//     return NextResponse.json({ error: "Invalid room ID" }, { status: 400 });
-//   }
-
-//   const session = await getServerSession();
-
-//   if (!session?.user?.email) {
-//     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-//   }
-
-//   try {
-//     const { name } = await req.json();
-//     if (typeof name !== "string" || !name.trim()) {
-//       return NextResponse.json(
-//         { error: "Invalid document name" },
-//         { status: 400 }
-//       );
-//     }
-
-//     const updatedDoc = await updateDocumentName(new Types.ObjectId(id), name);
-//     if (!updatedDoc) {
-//       return NextResponse.json(
-//         { error: "Document not found" },
-//         { status: 404 }
-//       );
-//     }
-
-//     return NextResponse.json({ data: updatedDoc }, { status: 200 });
-//   } catch (error) {
-//     return NextResponse.json(
-//       { error: "Server error", details: error },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 // PUT /api/doch
 export async function PUT(  req: NextRequest,
   context: { params: Promise<{ id: string }> }

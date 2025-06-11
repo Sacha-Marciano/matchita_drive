@@ -35,8 +35,7 @@ type AddDocModalProps = {
   setShowSignoutMessage: Dispatch<SetStateAction<boolean>>;
 };
 
-// ─────────────────────────────────────────────────────────────
-
+//Component ─────────────────────────────────────────────────────────────
 export default function AddDocModal({
   isOpen,
   onClose,
@@ -75,7 +74,7 @@ export default function AddDocModal({
 
     ///////////////////////// STEP 1 - Extract ///////////////////////////////
     setStep("extract");
-    const extractedText = await extractText(selectedFile, session);
+    const extractedText = await extractText(selectedFile, session); 
     if (!extractedText) return;
 
     setActualText(extractedText);
